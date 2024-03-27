@@ -1,6 +1,6 @@
 pandas
 catboost
-plotlib
+plotly
 numpy
 joblib
 platypus
