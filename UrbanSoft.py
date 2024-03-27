@@ -1,7 +1,6 @@
 from platypus import NSGAII, Problem, Real,Permutation,Subset,CompoundOperator,SSX,SBX
 import joblib
 import math
-import random
 import matplotlib.pyplot as plt
 import streamlit as st
 import numpy as np
@@ -9,8 +8,14 @@ import pandas as pd
 from plotly import graph_objects as go
 
 outputs=[]	
-model=joblib.load('catboost.json')
 
+
+@st.cache_resource  # 👈 Add the caching decorator
+def load_model():
+    model1=joblib.load('catboost.json')
+    return model1
+
+model = load_model()
 BuildingShape1=st.sidebar.radio("Building Shape",["Boxy","L-shape"])
 if BuildingShape1=="Boxy":
     BuildingShape=0
@@ -107,7 +112,7 @@ if on:
         if res_com==0:
             return  go.Mesh3d(x=x, y=y, z=z, alphahull=1, flatshading=True,color='wheat')
         else:
-            return  go.Mesh3d(x=x, y=y, z=z, alphahull=1, flatshading=True,color='wheat')
+            return  go.Mesh3d(x=x, y=y, z=z, alphahull=1, flatshading=True,color='gray')
 
 
 
@@ -130,7 +135,7 @@ if on:
 
     n_park = n_park_f(n_parcel)
     parcel_list = list(range(n_parcel))
-    park_parcels = sorted(random.sample(parcel_list, n_park))
+    park_parcels = np.sort(np.random.choice(parcel_list, size=n_park, replace=False))
     building_parcels = [i for i in parcel_list if i not in park_parcels]
 
     parcels_X = []
@@ -206,7 +211,7 @@ if on:
         
         print(res_com_loc,com_floor)
         
-        if 180<Densityeachbldg<=240:
+        if 180<=Densityeachbldg<=240:
             if Bldg_Footprint==0.45:
                 stories=input[4]
             else:
@@ -246,9 +251,9 @@ if on:
 
         for i,j in zip(stories,range(0,len(stories))):
             if j%2==0:
-                adjacency.append([0,i])
+                adjacency.append([0,stories[j+1]])
             else:
-                adjacency.append([i,0])
+                adjacency.append([stories[j-1],0])
         
         Lengths = ((SiteLength/v)-Sub_street)*Bldg_Footprint
         Widths = ((100/u)-Sub_street)
@@ -442,7 +447,10 @@ if on:
 
 
     data=pd.DataFrame()
+    col=st.columns(options)
+    opt=0
     for solution in algorithm.result[0:options]:
+        
         var=solution.variables
         OB=[]
         OB_name=[]
@@ -557,8 +565,6 @@ if on:
             yy.append(i)
             yy.append(i)
         zz = [k*3.1 for k in stories]
-       
-        plt.scatter(xx,yy,c='b')
         
         xx1=[]
         for i in x2:
@@ -593,13 +599,9 @@ if on:
             
         for x, y, z,l in zip(xx2,yy2,zz2,commercial):
             fig.add_trace(comm(9.05, z, x, y,l))#
-        fig.show()
+
+        st.plotly_chart(fig)
     st.dataframe(data)
     outputs.append(algorithm.result)
 else:
     st.write("tap toggle to optimize ")
-    
-    
-    
-
-        
