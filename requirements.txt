@@ -1,6 +1,9 @@
 pandas
-catboost
-plotly
 numpy
+streamlit
+plotly
+Platypus-Opt
+matplotlib
 joblib
-platypus
+scikit-learn
+catboost
