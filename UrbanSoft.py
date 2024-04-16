@@ -10,7 +10,7 @@ from plotly import graph_objects as go
 outputs=[]	
 
 
-@st.cache_resource 
+@st.cache_resource  # 👈 Add the caching decorator
 def load_model():
     model1=joblib.load('catboost.json')
     return model1
@@ -28,36 +28,36 @@ u=st.sidebar.slider("U",min_value=2,max_value=4,step=1)
 v=st.sidebar.slider("V",min_value=2,max_value=6,step=1)
 n_parcel=u*v
 Densityeachbldg=st.sidebar.slider("Density each building",min_value=181,max_value=600,step=10)
-st.sidebar.header('Eenergy')
+st.sidebar.header('Energy')
 Heating=st.sidebar.checkbox('Heating')
 if Heating:
-    Heating_up = st.sidebar.number_input("Heating_up")
+    Heating_up = st.sidebar.slider("Heating",100,1000,50)
 
 Cooling=st.sidebar.checkbox('Cooling')
 if Cooling:
-    Cooling_up = st.sidebar.number_input("Cooling_up")
+    Cooling_up = st.sidebar.slider("Cooling",100,1000,50)
 
 Lighting=st.sidebar.checkbox('Lighting')
 if Lighting:
-    Lighting_up = st.sidebar.number_input("Lighting_up")
+    Lighting_up = st.sidebar.slider("Lighting",100,1000,50)
 Gas=st.sidebar.checkbox('Gas')
 if Gas:
-    GAS_up = st.sidebar.number_input("GAS_up")
-st.sidebar.header('Life')
+    GAS_up = st.sidebar.slider("GAS",100,1000,50)
+st.sidebar.header('Livability')
 Radiation=st.sidebar.checkbox('Radiation')
 if Radiation:
-    Radiation_up = st.sidebar.number_input("Radiation_up")
+    Radiation_up = st.sidebar.slider("Radiation",100,1000,50)
 Hours=st.sidebar.checkbox('Hours')
 if Hours:
-    Hours_up = st.sidebar.number_input("Hours_up")
+    Hours_up = st.sidebar.slider("Hours",100,1000,50)
 CO2=st.sidebar.checkbox('CO2')
 if CO2:
-    CO2_up = st.sidebar.number_input("CO2_up")
+    CO2_up = st.sidebar.slider("CO2",100,1000,500)
 Shade=st.sidebar.checkbox('Shade')
 if Shade:
-    Shade_up = st.sidebar.number_input("Shade_up")
+    Shade_up = st.sidebar.slider("Shader",100,1000,50)
 
-st.sidebar.header('VISIBILITY')
+st.sidebar.header('Environment')
 SVF=st.sidebar.checkbox('SVF')
 if SVF:
     max_svf=st.sidebar.checkbox('Maximum')
@@ -66,11 +66,11 @@ if SVF:
    
 Visibility=st.sidebar.checkbox('Visibility')
 if Visibility:
-    Visibility_down = st.sidebar.number_input("Lowest_Visibility") 
+    Visibility_down = st.sidebar.slider("Visibility",100,1000,50) 
 st.sidebar.header('Renewable')
 PV=st.sidebar.checkbox('PV')
 if PV:
-    PV_down = st.sidebar.number_input("Lowest_PV")
+    PV_down = st.sidebar.slider("PV",100,1000,50)
 
 true_indexes=[]
 my_list=[Heating,Cooling,Lighting,Gas,Radiation,Hours,CO2,Shade,SVF,Visibility,PV]
@@ -112,7 +112,7 @@ if on:
         if res_com==0:
             return  go.Mesh3d(x=x, y=y, z=z, alphahull=1, flatshading=True,color='wheat')
         else:
-            return  go.Mesh3d(x=x, y=y, z=z, alphahull=1, flatshading=True,color='gray')
+            return  go.Mesh3d(x=x, y=y, z=z, alphahull=1, flatshading=True,color='black')
 
 
 
@@ -190,7 +190,7 @@ if on:
     def optimize(input):
 
         Rotation = input[0][0]
-        Sub_street = input[1][0]
+        Sub_streetSub_street = input[1][0]
         Bldg_Footprint = input[2][0]
         WWR = input[3][0]
         com_floor = input[11][0]
@@ -255,8 +255,8 @@ if on:
             else:
                 adjacency.append([stories[j-1],0])
         
-        Lengths = ((SiteLength/v)-Sub_street)/2
-        Widths = ((100/u)-Sub_street)*Bldg_Footprint
+        Lengths = ((SiteLength/v)-Sub_street)*Bldg_Footprint
+        Widths = ((100/u)-Sub_street)
         
         if BuildingShape==0:
             Area=Lengths*Widths
@@ -378,9 +378,10 @@ if on:
                 Objectives.append(sum(en_h)*10000000)  
         if CO2:
             if sum(en_co)<CO2_up:
-                Objectives.append(sum(en_co))
+                co2=(((sum(e_l)+sum(e_c))*0.21233/1000)+((sum(e_h)+sum(e_g))*0.18316/1000))
+                Objectives.append(co2)
             else:
-                Objectives.append(sum(en_co)*10000000)  
+                Objectives.append(co2*10000000)  
             
         if Shade:
             if sum(en_sha)<Shade_up:
@@ -443,8 +444,6 @@ if on:
     problem.function = optimize
 
     algorithm = NSGAII(problem, variator=CompoundOperator(SSX(),SBX()))
-
-    ##########################################################
     algorithm.run(1)
 
 
@@ -507,7 +506,7 @@ if on:
 
         data4=pd.DataFrame([res_com_loc],columns=['com or res?'+str(i) for i in range(0,len(res_com_loc))])
         data5=pd.DataFrame([com_floor],columns=['com floor'+str(i) for i in range(0,len(com_floor))])
-
+        
         sum_res=[]
         sum_com=[]
         for s,rc in zip(stories,res_com_loc):
@@ -544,10 +543,9 @@ if on:
         st.write(lowest_length)
         st.markdown('longest length')
         st.write(longest_length)
-
-
-
         
+        #Building Shape	Green space ratio	Site Length	Rotation	Sub street	Bldg Footprint	Density (each bldg)	WWR	Lengths	Widths	U	V	Stories	Area	Com floors	Adjucancy-L	Adjucancy-R	hN	hNE	hE	hSE	hS	hSW	hW	hNW	dN	dNE	dE	dSE	dS	dSW	dW	dNW	Res Ratio	Com Ratio
+        #model.predict([BuildingShape1,green_ratio,SiteLength,Rotation,Sub_Street,Bldg_Footprint,Densityeachbldg,WWR,Lengths,Widths,u,v,*Stories,Area,])
         my_list1=["Heating","Cooling","Lighting","Gas","Radiation","Hours","CO2","Shade","SVF","Visibility","PV"]
         
         tr=0
