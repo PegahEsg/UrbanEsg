@@ -516,7 +516,7 @@ if on:
             else:
                 sum_com.append(s)
         nafar_res1=round((sum(sum_res)*Area)/35)
-        nafar_office=round((sum(sum_com)*Area)9.3)
+        nafar_office=round((sum(sum_com)*Area)/9.3)
         nafar_comm=round((len(com_floor)*Area)/6.2)
         
         Machine_res=round(nafar_res1/4)
