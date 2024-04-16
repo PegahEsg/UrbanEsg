@@ -10,7 +10,7 @@ from plotly import graph_objects as go
 outputs=[]	
 
 
-@st.cache_resource  # 👈 Add the caching decorator
+@st.cache_resource 
 def load_model():
     model1=joblib.load('catboost.json')
     return model1
@@ -605,3 +605,14 @@ if on:
     outputs.append(algorithm.result)
 else:
     st.write("tap toggle to optimize ")
+    
+    
+    
+
+        
+        
+
+
+
+    
+    
