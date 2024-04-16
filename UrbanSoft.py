@@ -521,7 +521,7 @@ if on:
         
         Machine_res=round(nafar_res1/4)
         Machine_office=round(nafar_office/2)
-        Machine_comm=round(nafar_comm/2
+        Machine_comm=round(nafar_comm/2)
         
         lowest_length=width+length
         longest_length=max((u*width)+length,(v*length)+width)
