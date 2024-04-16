@@ -528,8 +528,8 @@ if on:
         Machine_office=round(nafar_office/2)
         Machine_comm=round(nafar_comm/2)
         
-        lowest_length=width+length
-        longest_length=max((u*width)+length,(v*length)+width)
+        lowest_length=Widths+Lengths
+        longest_length=max((u*Widths)+Lengths,(v*Lengths)+Widths)
         
         st.markdown('number of occupants in res')
         st.write(nafar_res1)
