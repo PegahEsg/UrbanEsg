@@ -514,6 +514,12 @@ if on:
                 sum_res.append(s)
             else:
                 sum_com.append(s)
+        Lengths = ((SiteLength/v)-var[1][0])/2
+        Widths = ((100/u)-var[1][0])*var[2][0]
+        if BuildingShape==0:
+            Area=Lengths*Widths
+        else:
+            Area=(Lengths*(Widths*2)*0.75)
         nafar_res1=round((sum(sum_res)*Area)/35)
         nafar_office=round((sum(sum_com)*Area)/9.3)
         nafar_comm=round((len(com_floor)*Area)/6.2)
