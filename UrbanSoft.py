@@ -255,8 +255,8 @@ if on:
             else:
                 adjacency.append([stories[j-1],0])
         
-        Lengths = ((SiteLength/v)-Sub_street)*Bldg_Footprint
-        Widths = ((100/u)-Sub_street)
+        Lengths = ((SiteLength/v)-Sub_street)/2
+        Widths = ((100/u)-Sub_street)*Bldg_Footprint
         
         if BuildingShape==0:
             Area=Lengths*Widths
