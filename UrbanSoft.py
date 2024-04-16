@@ -445,7 +445,7 @@ if on:
     algorithm = NSGAII(problem, variator=CompoundOperator(SSX(),SBX()))
 
     ##########################################################
-    algorithm.run(10)
+    algorithm.run(1)
 
 
     data=pd.DataFrame()
@@ -507,6 +507,47 @@ if on:
 
         data4=pd.DataFrame([res_com_loc],columns=['com or res?'+str(i) for i in range(0,len(res_com_loc))])
         data5=pd.DataFrame([com_floor],columns=['com floor'+str(i) for i in range(0,len(com_floor))])
+
+        sum_res=[]
+        sum_com=[]
+        for s,rc in zip(stories,res_com_loc):
+            if rc==0:
+                sum_res.append(s)
+            else:
+                sum_com.append(s)
+        nafar_res1=round((sum(sum_res)*Area)/35)
+        nafar_office=round((sum(sum_com)*Area)9.3)
+        nafar_comm=round((len(com_floor)*Area)/6.2)
+        
+        Machine_res=round(nafar_res1/4)
+        Machine_office=round(nafar_office/2)
+        Machine_comm=round(nafar_comm/2
+        
+        lowest_length=width+length
+        longest_length=max((u*width)+length,(v*length)+width)
+        
+        st.markdown('number of occupants in res')
+        st.write(nafar_res1)
+        st.markdown('number of occupants in office')
+        st.write(nafar_office)
+        st.markdown('number of occupants in comm')
+        st.write(nafar_comm)
+        
+        st.markdown('number of Vehicles res')
+        st.write(Machine_res)
+        st.markdown('number of Vehicles office')
+        st.write(Machine_office)
+        st.markdown('number of Vehicles comm')
+        st.write(Machine_comm)
+        
+        st.markdown('lowest length')
+        st.write(lowest_length)
+        st.markdown('longest length')
+        st.write(longest_length)
+
+
+
+        
         my_list1=["Heating","Cooling","Lighting","Gas","Radiation","Hours","CO2","Shade","SVF","Visibility","PV"]
         
         tr=0
