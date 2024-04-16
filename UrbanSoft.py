@@ -443,7 +443,9 @@ if on:
     problem.function = optimize
 
     algorithm = NSGAII(problem, variator=CompoundOperator(SSX(),SBX()))
-    algorithm.run(1)
+
+    ##########################################################
+    algorithm.run(10)
 
 
     data=pd.DataFrame()
