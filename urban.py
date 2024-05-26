@@ -420,14 +420,14 @@ def optimize(input):
 
     adjacency=adjacency_estimation(stories)
     
-    #Lengths = ((SiteLength/v)-Sub_street)/2
-    #Widths = ((100/u)-Sub_street)*Bldg_Footprint
+    Lengths = ((SiteLength/v)-Sub_street)/2
+    Widths = ((100/u)-Sub_street)*Bldg_Footprint
 
     #Lengths = (Site_Width)-(u*Sub_street)/2*u
     #Widths = ((SiteLength)-(v*Sub_street)/v)*Bldg_Footprint
 
-    Lengths = ((SiteLength/v)-(v*Sub_street))/2
-    Widths = ((100/u)-(u*Sub_street))*Bldg_Footprint
+    #Lengths = ((SiteLength/v)-(v*Sub_street))/2
+    #Widths = ((100/u)-(u*Sub_street))*Bldg_Footprint
 
     Area=Area_building(BuildingShape,Lengths,Widths)
     #Dens = (sum(Stories)*Lengths*Widths)/(140*90)
