@@ -740,9 +740,9 @@ if on:
         sum_com=[]
         for s,rc in zip(zz,res_com_loc):
             if rc==0:
-                sum_res.append(s)
+                sum_res.append(1)
             else:
-                sum_com.append(s)
+                sum_com.append(1)
         nafar_res1=round((sum(sum_res)*Area)/35)
         nafar_office=round((sum(sum_com)*Area)/9.3)
         nafar_comm=round((len(com_floor)*Area)/6.2)    
