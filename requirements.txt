@@ -5,7 +5,7 @@ plotly
 Platypus-Opt
 matplotlib
 joblib
-scikit-learn
+scikit-learn==1.4.1.post1
 xgboost
 shapely
 catboost
