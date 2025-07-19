@@ -815,7 +815,7 @@ def optimize(input):
 def X_var():
     
     
-    var0 = Subset([0,45,90],1) #Rotation
+    var0 = Subset([-45,0,45],1) #Rotation
     var1 = Subset([6,12],1) #Street width
     var2 = Subset([0.45,0.6],1) #Building Footprint
     var3 = Subset([1,1],1) #WWR
