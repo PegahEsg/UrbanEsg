@@ -725,7 +725,7 @@ def optimize(input):
     Machine_res=round(nafar_res1/4)
     Machine_office=round(nafar_office/2)
     Machine_comm=round(nafar_comm/2)   
-    lowest_length=round(var[1][0], 2)
+    lowest_length=round(input[1][0], 2)
     longest_length=round(max((u*Widths)+Lengths,(v*Lengths)+Widths),2)
 
     num_gas_car=int((Machine_res+Machine_office+Machine_comm)*gas_car_rate) #####
@@ -1283,7 +1283,7 @@ if on:
             - Open space per capita :{round(pc_out,1)}   
             """
             )
-        st.write(f"In this generated option, the number of residential occupants is {nafar_res1} with {Machine_res} cars,the number of office occupants is {nafar_office} with {Machine_office} cars, and number of commercial occupants is {nafar_comm} with {Machine_comm} cars.") #In this option the longest way is {longest_length} meter and shortest length is {lowest_length} meter. ")
+        st.write(f"In this generated option, the number of residential occupants is {nafar_res1} with {Machine_res} cars,the number of office occupants is {nafar_office} with {Machine_office} cars, and number of commercial occupants is {nafar_comm} with {Machine_comm} cars. In this option the longest way is {longest_length} meter and shortest length is {lowest_length} meter. ")
         #st.write(f"The number of gasoline car is {num_gas_car} with {total_co2_gas} CO2 production")
         #if ad :
             #st.write(f"The number of CNG cars is {num_cng_car} with {total_co2_CNG} CO2 production.")
