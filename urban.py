@@ -1265,7 +1265,7 @@ if on:
         Machine_comm=round(nafar_comm/2)   
 
         
-        lowest_length=round(Widths+Lengths,2)
+        lowest_length=round(input[1][0], 2)
         longest_length=round(max((u*Widths)+Lengths,(v*Lengths)+Widths),2)
 
         num_gas_car=int((Machine_res+Machine_office+Machine_comm)*gas_car_rate) #####
