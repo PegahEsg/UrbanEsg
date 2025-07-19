@@ -816,7 +816,7 @@ def X_var():
     
     
     var0 = Subset([0,45,90],1) #Rotation
-    var1 = Subset([5,10],1) #Sub Street
+    var1 = Subset([6,12],1) #Street width
     var2 = Subset([0.45,0.6],1) #Building Footprint
     var3 = Subset([1,1],1) #WWR
            
@@ -910,7 +910,7 @@ if on:
         var=solution.variables
         OB=[]
         OB_name=[]
-        data_general=pd.DataFrame([[green_ratio,var[0][0],var[1][0],var[2][0],var[12][0],var[15][0]]],columns=['Green Space Ratio','Rotation (Degree)', 'Sub Street (m)', 'Building footprint','Residental Ratio','Commercial Ratio'])
+        data_general=pd.DataFrame([[green_ratio,var[0][0],var[1][0],var[2][0],var[12][0],var[15][0]]],columns=['Green Space Ratio','Rotation (Degree)', 'Street width (m)', 'Building footprint','Residental Ratio','Commercial Ratio'])
         
         Lengths = ((SiteLength-((v+1)*var[1][0]))/v)/2
         Widths = ((100-(u+1)*var[1][0])/u)*var[2][0]
@@ -1100,7 +1100,7 @@ if on:
                 
         Lengths = ((SiteLength-((v+1)*var[1][0]))/v)/2
         Widths = ((100-(u+1)*var[1][0])/u)*var[2][0]
-        data1=pd.DataFrame([[round(Widths,ndigits=1),round(Lengths,ndigits=1),var[0][0],var[1][0],var[2][0],var[12][0],var[15][0]]],columns=['Width (m)','Length (m)','Rotation (Degree)', 'Sub Street (m)', 'Building footprint','Residental Ratio','Commercial Ratio'])
+        data1=pd.DataFrame([[round(Widths,ndigits=1),round(Lengths,ndigits=1),var[0][0],var[1][0],var[2][0],var[12][0],var[15][0]]],columns=['Width (m)','Length (m)','Rotation (Degree)', 'Street width (m)', 'Building footprint','Residental Ratio','Commercial Ratio'])
 
         Bldg_Footprint=var[2][0]
         if 180<Densityeachbldg<=240:
