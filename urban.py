@@ -52,6 +52,10 @@ SiteLength=st.sidebar.slider("Site Length (m)",min_value=100,max_value=150,step=
 Site_Width=100
 u=st.sidebar.slider("Number of Parcel in a Row",min_value=2,max_value=4,step=1)
 v=st.sidebar.slider("Number of Parcels in a Column",min_value=2,max_value=6,step=1)
+
+if v < u:
+    st.sidebar.warning("⚠️ For better results, consider setting the number of parcels in a column greater than or equal to the number in a row.")
+  
 n_parcel=u*v
 Densityeachbldg=st.sidebar.slider("Building Density (%)",min_value=180,max_value=600,step=15)
 
