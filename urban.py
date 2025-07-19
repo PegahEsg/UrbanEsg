@@ -1054,7 +1054,7 @@ if on:
         Machine_office=round(nafar_office/4)
         Machine_comm=round(nafar_comm/4)   
         lowest_length=round(var[1][0], 2) #round(Widths+Lengths,2)
-        longest_length=round((Lengths * u * 2) + (Widths * v) + (Sub_street * (u - 1)), 2) #round(max((u*Widths)+Lengths,(v*Lengths)+Widths),2)
+        longest_length=round((Lengths * u * 2) + (Widths * v) + (var[1][0] * (u - 1)), 2) #round(max((u*Widths)+Lengths,(v*Lengths)+Widths),2)
 
         num_gas_car=int((Machine_res+Machine_office+Machine_comm)*gas_car_rate) #####
         num_cng_car=int((Machine_res+Machine_office+Machine_comm)*(1-gas_car_rate))###
