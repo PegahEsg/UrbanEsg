@@ -745,7 +745,7 @@ def optimize(input):
     Objectives=[]
 
     if EUI:
-        EUI_C=np.mean(e_h_building)*1.1+(np.mean(e_c_building)+np.mean(e_l_building))*3.1
+        EUI_C=np.mean(e_h_building)*1.1+(np.mean(e_c_building)+np.mean(e_l_building))*3
         if EUI_down<EUI_C<EUI_up:
             Objectives.append(np.mean(EUI_C))
         else:
@@ -1080,11 +1080,12 @@ if on:
         each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
         each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
         
-        each["Cooling (kWh/m2)"] = each["Cooling (kWh/m2)"] * 0.9
-        each["Heating (kWh/m2)"] = each["Heating (kWh/m2)"] * 0.9
+        each["Cooling (kWh/m2)"] = each["Cooling (kWh/m2)"] * 0.7
+        each["Heating (kWh/m2)"] = each["Heating (kWh/m2)"] * 0.8
+        each["Lighting (kWh/m2)"] = each["Lighting (kWh/m2)"] * 0.7
         
-        each['Co2']=each['Cooling (kWh/m2)']*1.1 + each['Heating (kWh/m2)']*1.1 +each['Lighting (kWh/m2)']*1.1
-        each['EUI']=each['Cooling (kWh/m2)']*3.1 + each['Heating (kWh/m2)']*1.1 +each['Lighting (kWh/m2)']*3.1
+        each['Co2']=each['Cooling (kWh/m2)']*3 + each['Heating (kWh/m2)']*1.1 +each['Lighting (kWh/m2)']*3
+        each['EUI']=each['Cooling (kWh/m2)']*3 + each['Heating (kWh/m2)']*1.1 +each['Lighting (kWh/m2)']*3
         
         each.round({'Co2':2})
         each_parks=pd.DataFrame({'name':['park '+str(i) for i in list(range(1,len(l_s_park)+1))],"location":park_coor,"SVF %":l_s_park,"Visibility %":l_v_park})
@@ -1358,8 +1359,8 @@ if on:
                            "Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building })
         
         each['Co2']=((each['Cooling (kWh/m2)']*Area + each['Lighting (kWh/m2)']*Area)*0.21233+(each['Heating (kWh/m2)']*Area*0.18316))*stories
-        #each['EUI(kWh/m2)']=((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1.1+(each['Heating (kWh/m2)']*3.1))*0.9
-        each['EUI(kWh/m2)'] = ((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*3.1 + (each['Heating (kWh/m2)']*1.1))
+        #each['EUI(kWh/m2)']=((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1.1+(each['Heating (kWh/m2)']*3))*0.9
+        each['EUI(kWh/m2)'] = ((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*3 + (each['Heating (kWh/m2)']*1.1))
 
 
         
