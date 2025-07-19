@@ -1357,7 +1357,7 @@ if on:
         
         each['Co2']=((each['Cooling (kWh/m2)']*Area + each['Lighting (kWh/m2)']*Area)*0.21233+(each['Heating (kWh/m2)']*Area*0.18316))*stories
         #each['EUI(kWh/m2)']=((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1.1+(each['Heating (kWh/m2)']*3.1))*0.9
-        #each['EUI(kWh/m2)'] = ((each['Cooling (kWh/m2)']*0.9 + each['Lighting (kWh/m2)'])*3.1 + (each['Heating (kWh/m2)']*0.9*1.1))
+        each['EUI(kWh/m2)'] = ((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*3.1 + (each['Heating (kWh/m2)']*1.1))
 
 
         
