@@ -1079,8 +1079,10 @@ if on:
         
         each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
         each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
-        each["Cooling (kWh/m2)"] *= 0.9
-        each["Heating (kWh/m2)"] *= 0.9
+        
+        each["Cooling (kWh/m2)"] = each["Cooling (kWh/m2)"] * 0.9
+        each["Heating (kWh/m2)"] = each["Heating (kWh/m2)"] * 0.9
+        
         each['Co2']=each['Cooling (kWh/m2)']*1.1 + each['Heating (kWh/m2)']*1.1 +each['Lighting (kWh/m2)']*1.1
         each['EUI']=each['Cooling (kWh/m2)']*3.1 + each['Heating (kWh/m2)']*1.1 +each['Lighting (kWh/m2)']*3.1
         
