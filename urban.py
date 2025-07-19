@@ -745,7 +745,7 @@ def optimize(input):
     Objectives=[]
 
     if EUI:
-        EUI_C=np.mean(e_h_building)*1.1+(np.mean(e_c_building)+np.mean(e_l_building))*3
+        EUI_C=np.mean(e_h_building)*1.1+(np.mean(e_c_building)+np.mean(e_l_building))*1.5
         if EUI_down<EUI_C<EUI_up:
             Objectives.append(np.mean(EUI_C))
         else:
@@ -1084,8 +1084,8 @@ if on:
         each["Heating (kWh/m2)"] = each["Heating (kWh/m2)"] * 0.8
         each["Lighting (kWh/m2)"] = each["Lighting (kWh/m2)"] * 0.7
         
-        each['Co2']=each['Cooling (kWh/m2)']*3 + each['Heating (kWh/m2)']*1.1 +each['Lighting (kWh/m2)']*3
-        each['EUI']=each['Cooling (kWh/m2)']*3 + each['Heating (kWh/m2)']*1.1 +each['Lighting (kWh/m2)']*3
+        each['Co2']=each['Cooling (kWh/m2)']*1.5 + each['Heating (kWh/m2)']*1.1 +each['Lighting (kWh/m2)']*1.5
+        each['EUI']=each['Cooling (kWh/m2)']*1.5 + each['Heating (kWh/m2)']*1.1 +each['Lighting (kWh/m2)']*1.5
         
         each.round({'Co2':2})
         each_parks=pd.DataFrame({'name':['park '+str(i) for i in list(range(1,len(l_s_park)+1))],"location":park_coor,"SVF %":l_s_park,"Visibility %":l_v_park})
@@ -1360,7 +1360,7 @@ if on:
         
         each['Co2']=((each['Cooling (kWh/m2)']*Area + each['Lighting (kWh/m2)']*Area)*0.21233+(each['Heating (kWh/m2)']*Area*0.18316))*stories
         #each['EUI(kWh/m2)']=((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1.1+(each['Heating (kWh/m2)']*3))*0.9
-        each['EUI(kWh/m2)'] = ((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*3 + (each['Heating (kWh/m2)']*1.1))
+        each['EUI(kWh/m2)'] = ((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1.5 + (each['Heating (kWh/m2)']*1.1))
 
 
         
