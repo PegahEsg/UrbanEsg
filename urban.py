@@ -1093,67 +1093,67 @@ for i in x1:
     yy2 = yy
     zz2 = commercial
 
-        Area=Area_building(BuildingShape,Lengths,Widths)
-        adjacency=adjacency_estimation(zz)
-        height=neigbors_h(zz,park_loc,u,v) ####
-        building_loc_copy=building_loc.copy()*2
-        Rotation=var[0][0]
-        sum_res=[]
-        sum_com=[]
-        for s,rc in zip(zz,res_com_loc):
-            if rc==0:
-                sum_res.append(s/3.5)
-            else:
-                sum_com.append(s/3.5)
-        #st.write(Area,sum_res,sum_com)
-        nafar_res1=round((sum(sum_res)*Area)/17) #####
-        nafar_office=round(((sum(sum_com)*var[15][0])*Area)/9.3)
-        nafar_comm=round(((sum(sum_com)*(1-var[15][0]))*Area)/6.2)
-        Machine_res=round(nafar_res1/4)
-        Machine_office=round(nafar_office/4)
-        Machine_comm=round(nafar_comm/4)
-        lowest_length=round(var[1][0], 2) #round(Widths+Lengths,2)
-        longest_length=round((Lengths * u * 2) + (Widths * v) + (var[1][0] * ((u *2) - 1)), 2) #round(max((u*Widths)+Lengths,(v*Lengths)+Widths),2)
+    Area=Area_building(BuildingShape,Lengths,Widths)
+    adjacency=adjacency_estimation(zz)
+    height=neigbors_h(zz,park_loc,u,v) ####
+    building_loc_copy=building_loc.copy()*2
+    Rotation=var[0][0]
+    sum_res=[]
+    sum_com=[]
+for s,rc in zip(zz,res_com_loc):
+    if rc==0:
+        sum_res.append(s/3.5)
+    else:
+        sum_com.append(s/3.5)
 
-        num_gas_car=int((Machine_res+Machine_office+Machine_comm)*gas_car_rate) #####
-        num_cng_car=int((Machine_res+Machine_office+Machine_comm)*(1-gas_car_rate))###
+    nafar_res1=round((sum(sum_res)*Area)/17) #####
+    nafar_office=round(((sum(sum_com)*var[15][0])*Area)/9.3)
+    nafar_comm=round(((sum(sum_com)*(1-var[15][0]))*Area)/6.2)
+    Machine_res=round(nafar_res1/4)
+    Machine_office=round(nafar_office/4)
+    Machine_comm=round(nafar_comm/4)
+    lowest_length=round(var[1][0], 2) #round(Widths+Lengths,2)
+    longest_length=round((Lengths * u * 2) + (Widths * v) + (var[1][0] * ((u *2) - 1)), 2) #round(max((u*Widths)+Lengths,(v*Lengths)+Widths),2)
 
-
-        total_co2_gas=round(0.07956*num_gas_car*2.31*longest_length,2) #####
-        total_co2_CNG=round(0.06453*num_gas_car* 2.75*longest_length,2) #####
-        total_co2=round(total_co2_gas+total_co2_CNG,2) #####
+    num_gas_car=int((Machine_res+Machine_office+Machine_comm)*gas_car_rate) #####
+    num_cng_car=int((Machine_res+Machine_office+Machine_comm)*(1-gas_car_rate))###
 
 
-        r_pv_building,e_c_building,e_h_building,e_l_building,en_h_building,hours_building,en_co_building,l_s_building,l_v_building=predictive_model(BuildingShape,green_ratio,SiteLength,var[0][0],var[1][0],var[2][0],Densityeachbldg,var[3][0],Lengths,Widths,u,v,zz,Area,adjacency,height,dimention,var[12][0],var[15][0],com_floor,res_com_loc,building_loc_copy)
-        r_pv_park,e_c_park,e_h_park,e_l_park,en_h_park,hours_park,en_co_park,l_s_park,l_v_park=predictive_model_park(BuildingShape,green_ratio,SiteLength,var[0][0],var[1][0],var[2][0],Lengths,Widths,u,v,Area,height,dimention,park_loc)
+    total_co2_gas=round(0.07956*num_gas_car*2.31*longest_length,2) #####
+    total_co2_CNG=round(0.06453*num_gas_car* 2.75*longest_length,2) #####
+    total_co2=round(total_co2_gas+total_co2_CNG,2) #####
 
 
-        if BuildingShape==0:
-            area=[(2*i*3.5*Widths)+(2*i*3.5*Lengths)+(Site_Width*SiteLength) for i in zz]
-            vol=[area*sto*3.5 for area,sto in zip(area,zz)]
-        else:
-            area=[(2*i*3.5*Widths)+(2*i*3.5*Lengths)+(Site_Width*SiteLength)*75 for i in zz]
-            vol=[area*sto*3.5*0.75 for area,sto in zip(area,zz)]
+    r_pv_building,e_c_building,e_h_building,e_l_building,en_h_building,hours_building,en_co_building,l_s_building,l_v_building=predictive_model(BuildingShape,green_ratio,SiteLength,var[0][0],var[1][0],var[2][0],Densityeachbldg,var[3][0],Lengths,Widths,u,v,zz,Area,adjacency,height,dimention,var[12][0],var[15][0],com_floor,res_com_loc,building_loc_copy)
+    r_pv_park,e_c_park,e_h_park,e_l_park,en_h_park,hours_park,en_co_park,l_s_park,l_v_park=predictive_model_park(BuildingShape,green_ratio,SiteLength,var[0][0],var[1][0],var[2][0],Lengths,Widths,u,v,Area,height,dimention,park_loc)
 
 
-        each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
+    if BuildingShape==0:
+        area=[(2*i*3.5*Widths)+(2*i*3.5*Lengths)+(Site_Width*SiteLength) for i in zz]
+        vol=[area*sto*3.5 for area,sto in zip(area,zz)]
+    else:
+        area=[(2*i*3.5*Widths)+(2*i*3.5*Lengths)+(Site_Width*SiteLength)*75 for i in zz]
+        vol=[area*sto*3.5*0.75 for area,sto in zip(area,zz)]
 
-        each["Cooling (kWh/m2)"] = each["Cooling (kWh/m2)"] * 0.6
-        each["Heating (kWh/m2)"] = each["Heating (kWh/m2)"] * 0.8
-        each["Lighting (kWh/m2)"] = each["Lighting (kWh/m2)"] * 0.7
-        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 2
 
-        each['Co2']=each['Cooling (kWh/m2)']*1.7 + each['Heating (kWh/m2)']*1 +each['Lighting (kWh/m2)']*1.7
-        each['EUI']=each['Cooling (kWh/m2)']*1.7 + each['Heating (kWh/m2)']*1 +each['Lighting (kWh/m2)']*1.7
+    each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
 
-        each.round({'Co2':2})
-        each_parks=pd.DataFrame({'name':['park '+str(i) for i in list(range(1,len(l_s_park)+1))],"location":park_coor,"SVF %":l_s_park,"Visibility %":l_v_park})
+    each["Cooling (kWh/m2)"] = each["Cooling (kWh/m2)"] * 0.6
+    each["Heating (kWh/m2)"] = each["Heating (kWh/m2)"] * 0.8
+    each["Lighting (kWh/m2)"] = each["Lighting (kWh/m2)"] * 0.7
+    each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 2
 
-        each=pd.concat([each,each_parks])
-        each=pd.concat([each,data_general])
+    each['Co2']=each['Cooling (kWh/m2)']*1.7 + each['Heating (kWh/m2)']*1 +each['Lighting (kWh/m2)']*1.7
+    each['EUI']=each['Cooling (kWh/m2)']*1.7 + each['Heating (kWh/m2)']*1 +each['Lighting (kWh/m2)']*1.7
 
-        download = pd.DataFrame()
-        download=pd.concat([download,each])
+    each.round({'Co2':2})
+    each_parks=pd.DataFrame({'name':['park '+str(i) for i in list(range(1,len(l_s_park)+1))],"location":park_coor,"SVF %":l_s_park,"Visibility %":l_v_park})
+
+    each=pd.concat([each,each_parks])
+    each=pd.concat([each,data_general])
+
+    download = pd.DataFrame()
+    download=pd.concat([download,each])
 
 # Step 1: Compute final score for each option
 scoring_df = download[['Cooling (kWh/m2)', 'Heating (kWh/m2)', 'Lighting (kWh/m2)',
