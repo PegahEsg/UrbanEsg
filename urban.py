@@ -294,7 +294,7 @@ selected_metrics = [my_list1[i] for i in true_indexes]
 st.sidebar.markdown("### Assign weights to selected metrics:")
 weights = {}
 for metric in selected_metrics:
-    weights[metric] = st.sidebar.slider(f"Weight for {metric}", 0.0, 10.0, 1.0, 1)
+    weights[metric] = st.sidebar.slider(f"Weight for {metric}", 0.0, 10.0, 1.0, 1.0)
 
 
 
