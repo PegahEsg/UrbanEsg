@@ -12,6 +12,8 @@ from shapely.geometry import Polygon ,Point,LineString
 import plotly.express as px
 import io
 import random
+from sklearn.preprocessing import MinMaxScaler
+
 
 buffer = io.BytesIO()
 background_image = """
@@ -284,7 +286,14 @@ for i in range(len(my_list)):
     if my_list[i] == True:
         true_indexes.append(i)
 
-options=int(st.sidebar.number_input("How many Alternative do you want?",min_value=1,max_value=5,value=1,step=1))
+#options=int(st.sidebar.number_input("How many Alternative do you want?",min_value=1,max_value=5,value=1,step=1))
+top_k = st.sidebar.slider("How many top alternatives to show based on your weights?", 1, len(algorithm.result), 5)
+
+st.sidebar.markdown("🎯 **Weight each selected objective for decision-making**")
+weights = {}
+for name in [my_list1[i] for i in true_indexes]:
+    weights[name] = st.sidebar.slider(f"Weight for {name}", 0.0, 1.0, 0.3)
+
 on = st.sidebar.button('Optimize')  
 def neigbors_h(stories,park_loc,u,v):
     def add_padding(matrix):
@@ -902,10 +911,48 @@ if on:
     algorithm.run(100)
 
 
+# ساختن جدول مقادیر اهداف
+scores_df = pd.DataFrame(
+    [s.objectives for s in algorithm.result],
+    columns=[my_list1[i] for i in true_indexes]
+)
+
+# تعریف شاخص‌هایی که کمتر بودنش بهتره
+minimize = ['EUI', 'Cooling', 'Heating', 'Lighting', 'Co2']
+maximize = ['SVF', 'Visibility', 'PV', 'Hours']
+
+# نرمال‌سازی داده‌ها بین 0 تا 1
+scaler = MinMaxScaler()
+norm_data = scaler.fit_transform(scores_df)
+normalized_scores = pd.DataFrame(norm_data, columns=scores_df.columns)
+
+# معکوس کردن شاخص‌هایی که کمتر بودنش بهتره
+for col in minimize:
+    if col in normalized_scores.columns:
+        normalized_scores[col] = 1 - normalized_scores[col]
+
+# محاسبه امتیاز نهایی با وزن‌هایی که کاربر داده
+final_scores = []
+for idx, row in normalized_scores.iterrows():
+    score = sum([weights.get(name, 0) * row[name] for name in row.index])
+    final_scores.append(score)
+
+# پیدا کردن نزدیک‌ترین گزینه‌ها به بهترین امتیاز
+score_df = pd.DataFrame({
+    'index': list(range(len(final_scores))),
+    'score': final_scores
+})
+best_score = max(final_scores)
+score_df['distance'] = abs(score_df['score'] - best_score)
+
+# انتخاب top_k گزینه نزدیک به بهترین
+closest_k = score_df.sort_values('distance').head(top_k)['index'].tolist()
+
     data=pd.DataFrame()
     col=st.columns(options)
     opt=1
     download=pd.DataFrame()
+
     for solution in algorithm.result:
         var=solution.variables
         OB=[]
@@ -1078,8 +1125,7 @@ if on:
 
         
         each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
-        each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
-        
+ 
         each["Cooling (kWh/m2)"] = each["Cooling (kWh/m2)"] * 0.6
         each["Heating (kWh/m2)"] = each["Heating (kWh/m2)"] * 0.8
         each["Lighting (kWh/m2)"] = each["Lighting (kWh/m2)"] * 0.7
@@ -1093,16 +1139,44 @@ if on:
         
         each=pd.concat([each,each_parks])
         each=pd.concat([each,data_general])
-        
+
+        download = pd.DataFrame()
         download=pd.concat([download,each])
     
-        
-    for solution in algorithm.result[0:options]:
-        st.header(f"Alternative {int(opt)}")
-        opt+=1
-        var=solution.variables
-        OB=[]
-        OB_name=[]
+# Step 1: Compute final score for each option
+scoring_df = download[['Cooling (kWh/m2)', 'Heating (kWh/m2)', 'Lighting (kWh/m2)',
+                       'PV generation (kWh/m2)', 'SVF %', 'Visibility %']].copy()
+
+scoring_df = (scoring_df - scoring_df.min()) / (scoring_df.max() - scoring_df.min())
+scoring_df['Cooling (kWh/m2)'] = 1 - scoring_df['Cooling (kWh/m2)']
+scoring_df['Heating (kWh/m2)'] = 1 - scoring_df['Heating (kWh/m2)']
+scoring_df['Lighting (kWh/m2)'] = 1 - scoring_df['Lighting (kWh/m2)']
+
+if normalize:
+    total = weight_cooling + weight_heating + weight_lighting + weight_pv + weight_svf + weight_visibility
+    weight_cooling /= total
+    weight_heating /= total
+    weight_lighting /= total
+    weight_pv /= total
+    weight_svf /= total
+    weight_visibility /= total
+
+download['Final Score'] = (
+    scoring_df['Cooling (kWh/m2)'] * weight_cooling +
+    scoring_df['Heating (kWh/m2)'] * weight_heating +
+    scoring_df['Lighting (kWh/m2)'] * weight_lighting +
+    scoring_df['PV generation (kWh/m2)'] * weight_pv +
+    scoring_df['SVF %'] * weight_svf +
+    scoring_df['Visibility %'] * weight_visibility
+)
+
+    # Sort by Final Score and keep top-k
+download_sorted = download.sort_values(by="Final Score", ascending=False).head(top_k).reset_index(drop=True)
+
+# Loop through top-k results
+for idx, row in download_sorted.iterrows():
+    st.header(f"Alternative {idx+1}")
+    # حالا از row برای نمایش اطلاعات استفاده کن یا اگر لازم داری varها رو match کنی، با الگوریتم.result[idx] هم‌زمان استخراجش کن
                 
         Lengths = ((SiteLength-((v+1)*var[1][0]))/v)/2
         Widths = ((100-(u+1)*var[1][0])/u)*var[2][0]
