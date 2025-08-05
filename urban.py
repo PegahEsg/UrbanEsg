@@ -288,13 +288,13 @@ my_list1 = ["EUI", "Cooling", "Heating", "Lighting", "Roof Hot", "Hours", "Roof 
 selected_metrics = [my_list1[i] for i in true_indexes]
 
 
-my_list1 = ["EUI", "Cooling", "Heating", "Lighting", "Roof Hot", "Hours", "Roof Cold", "SVF", "Visibility", "PV", "Co2", "Shaded Area"]
+my_list1 = ["EUI", "Cooling", "Heating", "Lighting", "Radiation- Hottest week", "Solar Hours", "Radiation- Coldest week", "SVF", "Visibility", "PV power", "Co2 emission", "Shaded Area"]
 selected_metrics = [my_list1[i] for i in true_indexes]
 
-st.sidebar.markdown("### ⚖️ Assign weights to selected metrics:")
+st.sidebar.markdown("### Assign weights to selected metrics:")
 weights = {}
 for metric in selected_metrics:
-    weights[metric] = st.sidebar.slider(f"Weight for {metric}", 0.0, 10.0, 1.0, 0.5)
+    weights[metric] = st.sidebar.slider(f"Weight for {metric}", 0.0, 10.0, 1.0, 1)
 
 
 
