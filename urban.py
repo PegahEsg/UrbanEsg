@@ -284,17 +284,33 @@ for i in range(len(my_list)):
     if my_list[i] == True:
         true_indexes.append(i)
 
-my_list1 = ["EUI", "Cooling", "Heating", "Lighting", "Roof Hot", "Hours", "Roof Cold", "SVF", "Visibility", "PV", "Co2", "Shaded Area"]
+
+my_list1 = ["EUI", "Cooling", "Heating", "Lighting", "Radiation- Hottest week", "Solar Hours", "Radiation- Coldest week", "SVF", "Visibility", "PV power", "Co2 emission", "Shaded Area"]
 selected_metrics = [my_list1[i] for i in true_indexes]
+
+st.sidebar.markdown("### ⚖️ Assign weights to selected metrics:")
+weights = {}
+for metric in selected_metrics:
+    weights[metric] = st.sidebar.slider(f"Weight for {metric}", 0.0, 10.0, 1.0, 0.5)
+
+selected_metrics = [my_list1[i] for i in true_indexes]
+
 
 
 my_list1 = ["EUI", "Cooling", "Heating", "Lighting", "Radiation- Hottest week", "Solar Hours", "Radiation- Coldest week", "SVF", "Visibility", "PV power", "Co2 emission", "Shaded Area"]
 selected_metrics = [my_list1[i] for i in true_indexes]
 
-st.sidebar.markdown("### Assign weights to selected metrics:")
+st.sidebar.markdown("### ⚖️ Assign weights to selected metrics:")
 weights = {}
 for metric in selected_metrics:
-    weights[metric] = st.sidebar.slider(f"Weight for {metric}", 0.0, 10.0, 1.0, 1.0)
+    weights[metric] = st.sidebar.slider(f"Weight for {metric}", 0.0, 10.0, 1.0, 0.5)
+
+selected_metrics = [my_list1[i] for i in true_indexes]
+
+st.sidebar.markdown("### ⚖️ Assign weights to selected metrics:")
+weights = {}
+for metric in selected_metrics:
+    weights[metric] = st.sidebar.slider(f"Weight for {metric}", 0.0, 10.0, 1.0, 0.5)
 
 
 
@@ -761,16 +777,17 @@ def optimize(input):
     if EUI:
         EUI_C=np.mean(e_h_building)*1+(np.mean(e_c_building)+np.mean(e_l_building))*1.7
         if EUI_down<EUI_C<EUI_up:
-            Objectives.append(np.mean(EUI_C))
+            Objectives.append(np.mean(EUI_C)
 
     if Shade:
-        shading_result, _, _ = shading(BuildingShape, Rotation, input[10], Lengths, Widths, SiteLength, Site_Width, [s * 3.5 for s in stories])
+        building_coords = [coor_parcel[i] for i in input[10]]
+    shading_result, _, _ = shading(BuildingShape, Rotation, building_coords, Lengths, Widths, SiteLength, Site_Width, [s * 3.5 for s in stories])
         is_shaded = [1 if i < 0.90 else 0 for i in shading_result]
         shaded_percent = round(sum(is_shaded) / len(shading_result), 3) if len(shading_result) > 0 else 0
 
         if "Shaded Area" in selected_metrics:
             Objectives.append(shaded_percent)
-
+)
         else:
             Objectives.append(EUI_C*10000000)
     
@@ -833,7 +850,8 @@ def optimize(input):
             Objectives.append(co2_total)
 
     if Shade:
-        shading_result, _, _ = shading(BuildingShape, Rotation, input[10], Lengths, Widths, SiteLength, Site_Width, [s * 3.5 for s in stories])
+        building_coords = [coor_parcel[i] for i in input[10]]
+    shading_result, _, _ = shading(BuildingShape, Rotation, building_coords, Lengths, Widths, SiteLength, Site_Width, [s * 3.5 for s in stories])
         is_shaded = [1 if i < 0.90 else 0 for i in shading_result]
         shaded_percent = round(sum(is_shaded) / len(shading_result), 3) if len(shading_result) > 0 else 0
 
