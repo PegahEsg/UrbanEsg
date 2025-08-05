@@ -1533,73 +1533,54 @@ else:
     
     
 
+# ---- AHP block injected ----
 
-# --- AHP Section Start ---
-# Example AHP Weights (you can later replace this with dynamic user input or proper AHP matrix)
-# These weights should sum to 1
-weight_cooling = 0.2
-weight_heating = 0.1
-weight_lighting = 0.2
-weight_pv = 0.2
-weight_svf = 0.15
-weight_visibility = 0.15
+# دریافت ورودی کاربر برای انتخاب شاخص‌ها و وزن‌دهی
+st.subheader("🎯 Select your preferred criteria and assign weights")
+selected_metrics = []
+weights = []
 
-# Compute final score using AHP-derived weights
-scoring_df = download[['Cooling (kWh/m2)', 'Heating (kWh/m2)', 'Lighting (kWh/m2)', 
-                       'PV generation (kWh/m2)', 'SVF %', 'Visibility %']].copy()
+if st.checkbox("Cooling (kWh/m2)"):
+    selected_metrics.append("Cooling (kWh/m2)")
+    weights.append(st.slider("Weight for Cooling", 0.0, 1.0, 0.2))
 
-# Normalize the data using min-max scaling
-scoring_df = (scoring_df - scoring_df.min()) / (scoring_df.max() - scoring_df.min())
+if st.checkbox("Heating (kWh/m2)"):
+    selected_metrics.append("Heating (kWh/m2)")
+    weights.append(st.slider("Weight for Heating", 0.0, 1.0, 0.2))
 
-# Invert scores for criteria where lower is better
-scoring_df['Cooling (kWh/m2)'] = 1 - scoring_df['Cooling (kWh/m2)']
-scoring_df['Heating (kWh/m2)'] = 1 - scoring_df['Heating (kWh/m2)']
-scoring_df['Lighting (kWh/m2)'] = 1 - scoring_df['Lighting (kWh/m2)']
+if st.checkbox("Lighting (kWh/m2)"):
+    selected_metrics.append("Lighting (kWh/m2)")
+    weights.append(st.slider("Weight for Lighting", 0.0, 1.0, 0.2))
 
-# Final score
-download['Final Score'] = (
-    scoring_df['Cooling (kWh/m2)'] * weight_cooling +
-    scoring_df['Heating (kWh/m2)'] * weight_heating +
-    scoring_df['Lighting (kWh/m2)'] * weight_lighting +
-    scoring_df['PV generation (kWh/m2)'] * weight_pv +
-    scoring_df['SVF %'] * weight_svf +
-    scoring_df['Visibility %'] * weight_visibility
-)
-# --- AHP Section End ---
+if st.checkbox("PV generation (kWh/m2)"):
+    selected_metrics.append("PV generation (kWh/m2)")
+    weights.append(st.slider("Weight for PV", 0.0, 1.0, 0.2))
 
+if st.checkbox("SVF %"):
+    selected_metrics.append("SVF %")
+    weights.append(st.slider("Weight for SVF", 0.0, 1.0, 0.2))
 
+if st.checkbox("Visibility %"):
+    selected_metrics.append("Visibility %")
+    weights.append(st.slider("Weight for Visibility", 0.0, 1.0, 0.2))
 
-# -------- AHP Final Scoring Section --------
-st.sidebar.markdown("### Select Criteria and Assign Weights")
+if len(selected_metrics) > 0:
+    # نرمال‌سازی وزن‌ها
+    total = sum(weights)
+    norm_weights = [w / total for w in weights]
 
-# User-selected criteria
-all_criteria = ['Cooling (kWh/m2)', 'Heating (kWh/m2)', 'Lighting (kWh/m2)', 
-                'PV generation (kWh/m2)', 'SVF %', 'Visibility %']
-selected_criteria = st.sidebar.multiselect("Select Criteria to Include", all_criteria, default=all_criteria)
+    # نرمال‌سازی مقادیر و محاسبه Final Score
+    scoring_df = download[selected_metrics].copy()
+    scoring_df = (scoring_df - scoring_df.min()) / (scoring_df.max() - scoring_df.min())
 
-# Dictionary to hold weights
-weights = {}
-total_weight = 0
-for crit in selected_criteria:
-    weights[crit] = st.sidebar.slider(f"Weight for {crit}", 0.0, 1.0, 0.2, 0.01)
-    total_weight += weights[crit]
+    for col in ["Cooling (kWh/m2)", "Heating (kWh/m2)", "Lighting (kWh/m2)"]:
+        if col in scoring_df.columns:
+            scoring_df[col] = 1 - scoring_df[col]
 
-# Normalize weights
-if total_weight > 0:
-    for crit in selected_criteria:
-        weights[crit] /= total_weight
+    download['Final Score'] = 0
+    for metric, w in zip(selected_metrics, norm_weights):
+        download['Final Score'] += scoring_df[metric] * w
 
-# Normalize scores for selected criteria
-scoring_df = download[selected_criteria].copy()
-scoring_df = (scoring_df - scoring_df.min()) / (scoring_df.max() - scoring_df.min())
-
-# Invert criteria where lower is better
-for crit in ['Cooling (kWh/m2)', 'Heating (kWh/m2)', 'Lighting (kWh/m2)']:
-    if crit in scoring_df.columns:
-        scoring_df[crit] = 1 - scoring_df[crit]
-
-# Final AHP Score
-download['Final Score'] = scoring_df.apply(lambda row: sum(row[c] * weights[c] for c in selected_criteria), axis=1)
-
-# Sort and display top results
-download_sorted = download.sort_values(by="Final Score", ascending=False).head(top_k).reset_index(drop=True)
+    # مرتب‌سازی و نمایش top-k
+    download_sorted = download.sort_values(by="Final Score", ascending=False).head(top_k).reset_index(drop=True)
+    st.success("AHP-based scoring completed successfully!")
