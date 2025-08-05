@@ -1188,46 +1188,45 @@ download_sorted = download.sort_values(by="Final Score", ascending=False).head(t
 # Loop through top-k results
 for idx, row in download_sorted.iterrows():
     st.header(f"Alternative {idx+1}")
-    # حالا از row برای نمایش اطلاعات استفاده کن یا اگر لازم داری varها رو match کنی، با الگوریتم.result[idx] هم‌زمان استخراجش کن
+ 
+    Lengths = ((SiteLength-((v+1)*var[1][0]))/v)/2
+    Widths = ((100-(u+1)*var[1][0])/u)*var[2][0]
+    data1=pd.DataFrame([[round(Widths,ndigits=1),round(Lengths,ndigits=1),var[0][0],var[1][0],var[2][0],var[12][0],var[15][0]]],columns=['Width (m)','Length (m)','Rotation (Degree)', 'Street width (m)', 'Building footprint','Residental Ratio','Commercial Ratio'])
 
-        Lengths = ((SiteLength-((v+1)*var[1][0]))/v)/2
-        Widths = ((100-(u+1)*var[1][0])/u)*var[2][0]
-        data1=pd.DataFrame([[round(Widths,ndigits=1),round(Lengths,ndigits=1),var[0][0],var[1][0],var[2][0],var[12][0],var[15][0]]],columns=['Width (m)','Length (m)','Rotation (Degree)', 'Street width (m)', 'Building footprint','Residental Ratio','Commercial Ratio'])
+    Bldg_Footprint=var[2][0]
+    if 180<Densityeachbldg<=240:
+        if Bldg_Footprint==0.45:
+            stories=var[4]
+        else:
+            stories=var[4]
 
-        Bldg_Footprint=var[2][0]
-        if 180<Densityeachbldg<=240:
-            if Bldg_Footprint==0.45:
-                stories=var[4]
-            else:
-                stories=var[4]
+    elif 240<Densityeachbldg<=300:
+        if Bldg_Footprint==0.45:
+            stories=var[5]
+        else:
+            stories=var[4]
+    elif 300<Densityeachbldg<=360:
+        if Bldg_Footprint==0.45:
+            stories=var[7]
+        else:
+            stories=var[5]
 
-        elif 240<Densityeachbldg<=300:
-            if Bldg_Footprint==0.45:
-                stories=var[5]
-            else:
-                stories=var[4]
-        elif 300<Densityeachbldg<=360:
-            if Bldg_Footprint==0.45:
-                stories=var[7]
-            else:
-                stories=var[5]
-
-        elif 360<Densityeachbldg<=420:
-            if Bldg_Footprint==0.45:
-                stories=var[8]
-            else:
-                stories=var[6]
-        elif 420<Densityeachbldg<=480:
-            if Bldg_Footprint==0.45:
-                stories=var[9]
-            else:
-                stories=var[7]
-
-        elif 480<Densityeachbldg<=540:
+    elif 360<Densityeachbldg<=420:
+        if Bldg_Footprint==0.45:
             stories=var[8]
-
-        elif 540<Densityeachbldg<=700:
+        else:
+            stories=var[6]
+    elif 420<Densityeachbldg<=480:
+        if Bldg_Footprint==0.45:
             stories=var[9]
+        else:
+            stories=var[7]
+
+    elif 480<Densityeachbldg<=540:
+        stories=var[8]
+
+    elif 540<Densityeachbldg<=700:
+        stories=var[9]
         #data2=pd.DataFrame([stories],columns=['h'+str(i) for i in range(len(stories))])
         data3=pd.DataFrame([var[10]],columns=['parcel_building'+str(i) for i in range(0,len(var[10]))])
 
