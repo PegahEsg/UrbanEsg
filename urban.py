@@ -1,4 +1,3 @@
-download = pd.DataFrame()
 from platypus import NSGAII, Problem, Real,Permutation,Subset,CompoundOperator,SSX,SBX
 import joblib
 import joblib
@@ -907,6 +906,7 @@ if on:
     col=st.columns(options)
     opt=1
     download=pd.DataFrame()
+    
     for solution in algorithm.result:
         var=solution.variables
         OB=[]
@@ -1522,14 +1522,3 @@ if on:
 
 else:
     st.write("Tap Toggle to Optimize")
-    
-    
-    
-
-        
-        
-
-
-
-    
-    
