@@ -957,10 +957,10 @@ score_df['distance'] = abs(score_df['score'] - best_score)
 # انتخاب top_k گزینه نزدیک به بهترین
 closest_k = score_df.sort_values('distance').head(top_k)['index'].tolist()
 
-    data=pd.DataFrame()
-    col=st.columns(options)
-    opt=1
-    download=pd.DataFrame()
+data=pd.DataFrame()
+col=st.columns(options)
+opt=1
+download=pd.DataFrame()
 
     for idx, row in download_sorted.iterrows():
         solution = algorithm.result[row['index']]
