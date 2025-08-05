@@ -777,7 +777,7 @@ def optimize(input):
     if EUI:
         EUI_C=np.mean(e_h_building)*1+(np.mean(e_c_building)+np.mean(e_l_building))*1.7
         if EUI_down<EUI_C<EUI_up:
-            Objectives.append(np.mean(EUI_C)
+            Objectives.append(np.mean(EUI_C))
 
     if Shade:
         building_coords = [coor_parcel[i] for i in input[10]]
@@ -787,7 +787,7 @@ def optimize(input):
 
         if "Shaded Area" in selected_metrics:
             Objectives.append(shaded_percent)
-)
+
         else:
             Objectives.append(EUI_C*10000000)
     
