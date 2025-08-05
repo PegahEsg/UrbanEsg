@@ -957,27 +957,28 @@ score_df['distance'] = abs(score_df['score'] - best_score)
 # انتخاب top_k گزینه نزدیک به بهترین
 closest_k = score_df.sort_values('distance').head(top_k)['index'].tolist()
 
-    data=pd.DataFrame()
-    col=st.columns(options)
-    opt=1
-    download=pd.DataFrame()
+data=pd.DataFrame()
+col=st.columns(options)
+opt=1
+download=pd.DataFrame()
 
-    for idx, row in download_sorted.iterrows():
-        solution = algorithm.result[row['index']]
-        var = solution.variables
-        st.header(f"Alternative {idx+1}")
-        st.dataframe(row)
+for idx, row in download_sorted.iterrows():
+    solution = algorithm.result[row['index']]
+    var = solution.variables
+    st.header(f"Alternative {idx+1}")
+    st.dataframe(row)
 
-        data_general=pd.DataFrame([[green_ratio,var[0][0],var[1][0],var[2][0],var[12][0],var[15][0]]],columns=['Green Space Ratio','Rotation (Degree)', 'Street width (m)', 'Building footprint','Residental Ratio','Commercial Ratio'])
+    data_general=pd.DataFrame([[green_ratio,var[0][0],var[1][0],var[2][0],var[12][0],var[15][0]]],columns=['Green Space Ratio','Rotation (Degree)', 'Street width (m)', 'Building footprint','Residental Ratio','Commercial Ratio'])
 
-        Lengths = ((SiteLength-((v+1)*var[1][0]))/v)/2
-        Widths = ((100-(u+1)*var[1][0])/u)*var[2][0]
-        Bldg_Footprint=var[2][0]
-        if 180<=Densityeachbldg<=240:
-            if Bldg_Footprint==0.45:
-                stories=var[4]
-            else:
-                stories=var[4]
+    Lengths = ((SiteLength-((v+1)*var[1][0]))/v)/2
+    Widths = ((100-(u+1)*var[1][0])/u)*var[2][0]
+    
+    Bldg_Footprint=var[2][0]
+    if 180<=Densityeachbldg<=240:
+        if Bldg_Footprint==0.45:
+            stories=var[4]
+        else:
+            stories=var[4]
 
         elif 240<Densityeachbldg<=300:
             if Bldg_Footprint==0.45:
@@ -1007,49 +1008,49 @@ closest_k = score_df.sort_values('distance').head(top_k)['index'].tolist()
         elif 540<Densityeachbldg<=700:
             stories=var[9]
 
-        res_ratio=var[12][0]
-        com_ratio=var[15][0]
+    res_ratio=var[12][0]
+    com_ratio=var[15][0]
 
-        if res_ratio==0.5:
-            res_com_loc=var[13]
-            com_floor=var[11]
+    if res_ratio==0.5:
+        res_com_loc=var[13]
+        com_floor=var[11]
+    else:
+        res_com_loc=var[14]
+        com_floor=var[16]
+
+    my_list1=["EUI","Cooling","Heating","Lighting","Roof Hot","Hours","Roof Cold","SVF","Visibility","PV","Co2"]
+
+    tr=0
+for i in true_indexes:
+    OB.append(solution.objectives[tr])
+    OB_name.append(my_list1[i])
+    tr+=1
+
+    building_loc=var[10]
+    if var[12][0]==0.5:
+        res_com_loc=var[13]
+        com_floor=var[11]
+    else:
+        res_com_loc=var[14]
+        com_floor=var[16]
+
+    res_com=res_com_loc
+    commercial=[]
+    cm=0
+    for i in res_com:
+        if i==0:
+            commercial.append(0)
         else:
-            res_com_loc=var[14]
-            com_floor=var[16]
+            commercial.append(com_floor[cm])
+            cm+=1
+    building_coor=[]
+    for i in building_loc:
+        building_coor.append(parcels_loc[i])
 
-        my_list1=["EUI","Cooling","Heating","Lighting","Roof Hot","Hours","Roof Cold","SVF","Visibility","PV","Co2"]
-
-        tr=0
-        for i in true_indexes:
-            OB.append(solution.objectives[tr])
-            OB_name.append(my_list1[i])
-            tr+=1
-
-        building_loc=var[10]
-        if var[12][0]==0.5:
-            res_com_loc=var[13]
-            com_floor=var[11]
-        else:
-            res_com_loc=var[14]
-            com_floor=var[16]
-
-        res_com=res_com_loc
-        commercial=[]
-        cm=0
-        for i in res_com:
-            if i==0:
-                commercial.append(0)
-            else:
-                commercial.append(com_floor[cm])
-                cm+=1
-        building_coor=[]
-        for i in building_loc:
-            building_coor.append(parcels_loc[i])
-
-        s = set(building_loc)
-        park_loc = [x for x in list(range(n_parcel)) if x not in s]
-        park_coor=[]
-        for i in park_loc:
+    s = set(building_loc)
+    park_loc = [x for x in list(range(n_parcel)) if x not in s]
+    park_coor=[]
+    for i in park_loc:
             park_coor.append(parcels_loc[i])
 
         x1=[]
