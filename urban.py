@@ -1533,54 +1533,37 @@ else:
     
     
 
-# ---- AHP block injected ----
+# --- AHP User Selection and Scoring ---
+st.sidebar.markdown("### Select performance metrics and assign weights")
 
-# دریافت ورودی کاربر برای انتخاب شاخص‌ها و وزن‌دهی
-st.subheader("🎯 Select your preferred criteria and assign weights")
+available_metrics = ['Cooling (kWh/m2)', 'Heating (kWh/m2)', 'Lighting (kWh/m2)',
+                     'PV generation (kWh/m2)', 'SVF %', 'Visibility %']
+
 selected_metrics = []
-weights = []
+weights = {}
 
-if st.checkbox("Cooling (kWh/m2)"):
-    selected_metrics.append("Cooling (kWh/m2)")
-    weights.append(st.slider("Weight for Cooling", 0.0, 1.0, 0.2))
+for metric in available_metrics:
+    if st.sidebar.checkbox(metric, value=True):
+        selected_metrics.append(metric)
+        weights[metric] = st.sidebar.slider(f"Weight for {metric}", 0.0, 1.0, 0.2, 0.05)
 
-if st.checkbox("Heating (kWh/m2)"):
-    selected_metrics.append("Heating (kWh/m2)")
-    weights.append(st.slider("Weight for Heating", 0.0, 1.0, 0.2))
+# Normalize weights
+if selected_metrics:
+    total_weight = sum(weights[m] for m in selected_metrics)
+    for m in selected_metrics:
+        weights[m] /= total_weight
 
-if st.checkbox("Lighting (kWh/m2)"):
-    selected_metrics.append("Lighting (kWh/m2)")
-    weights.append(st.slider("Weight for Lighting", 0.0, 1.0, 0.2))
-
-if st.checkbox("PV generation (kWh/m2)"):
-    selected_metrics.append("PV generation (kWh/m2)")
-    weights.append(st.slider("Weight for PV", 0.0, 1.0, 0.2))
-
-if st.checkbox("SVF %"):
-    selected_metrics.append("SVF %")
-    weights.append(st.slider("Weight for SVF", 0.0, 1.0, 0.2))
-
-if st.checkbox("Visibility %"):
-    selected_metrics.append("Visibility %")
-    weights.append(st.slider("Weight for Visibility", 0.0, 1.0, 0.2))
-
-if len(selected_metrics) > 0:
-    # نرمال‌سازی وزن‌ها
-    total = sum(weights)
-    norm_weights = [w / total for w in weights]
-
-    # نرمال‌سازی مقادیر و محاسبه Final Score
+    # Scoring: higher is better
     scoring_df = download[selected_metrics].copy()
     scoring_df = (scoring_df - scoring_df.min()) / (scoring_df.max() - scoring_df.min())
 
-    for col in ["Cooling (kWh/m2)", "Heating (kWh/m2)", "Lighting (kWh/m2)"]:
-        if col in scoring_df.columns:
+    for col in scoring_df.columns:
+        if "Cooling" in col or "Heating" in col or "Lighting" in col:
             scoring_df[col] = 1 - scoring_df[col]
 
-    download['Final Score'] = 0
-    for metric, w in zip(selected_metrics, norm_weights):
-        download['Final Score'] += scoring_df[metric] * w
+    # Compute weighted score
+    download["Final Score"] = 0
+    for metric in selected_metrics:
+        download["Final Score"] += scoring_df[metric] * weights[metric]
 
-    # مرتب‌سازی و نمایش top-k
     download_sorted = download.sort_values(by="Final Score", ascending=False).head(top_k).reset_index(drop=True)
-    st.success("AHP-based scoring completed successfully!")
