@@ -770,7 +770,7 @@ def optimize(input):
 
         if "Shaded Area" in selected_metrics:
             Objectives.append(shaded_percent)
-)
+
         else:
             Objectives.append(EUI_C*10000000)
     
