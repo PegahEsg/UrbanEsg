@@ -761,7 +761,7 @@ def optimize(input):
     if EUI:
         EUI_C=np.mean(e_h_building)*1+(np.mean(e_c_building)+np.mean(e_l_building))*1.7
         if EUI_down<EUI_C<EUI_up:
-            Objectives.append(np.mean(EUI_C)
+            Objectives.append(np.mean(EUI_C))
 
     if Shade:
         shading_result, _, _ = shading(BuildingShape, Rotation, input[10], Lengths, Widths, SiteLength, Site_Width, [s * 3.5 for s in stories])
