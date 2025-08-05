@@ -287,10 +287,10 @@ for i in range(len(my_list)):
 my_list1 = ["EUI", "Cooling", "Heating", "Lighting", "Roof Hot", "Hours", "Roof Cold", "SVF", "Visibility", "PV", "Co2"]
 selected_metrics = [my_list1[i] for i in true_indexes]
 
-st.sidebar.markdown("### ⚖️ وزن‌دهی به شاخص‌ها:")
+st.sidebar.markdown("### Select the priority:")
 weights = {}
 for metric in selected_metrics:
-    weights[metric] = st.sidebar.slider(f"وزن {metric}", 0.0, 10.0, 1.0, 0.5)
+    weights[metric] = st.sidebar.slider(f"Priority {metric}", 0.0, 10.0, 1.0, 0.5)
 
 
 options=int(st.sidebar.number_input("How many Alternative do you want?",min_value=1,max_value=5,value=1,step=1))
