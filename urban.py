@@ -284,6 +284,15 @@ for i in range(len(my_list)):
     if my_list[i] == True:
         true_indexes.append(i)
 
+my_list1 = ["EUI", "Cooling", "Heating", "Lighting", "Roof Hot", "Hours", "Roof Cold", "SVF", "Visibility", "PV", "Co2"]
+selected_metrics = [my_list1[i] for i in true_indexes]
+
+st.sidebar.markdown("### ⚖️ وزن‌دهی به شاخص‌ها:")
+weights = {}
+for metric in selected_metrics:
+    weights[metric] = st.sidebar.slider(f"وزن {metric}", 0.0, 10.0, 1.0, 0.5)
+
+
 options=int(st.sidebar.number_input("How many Alternative do you want?",min_value=1,max_value=5,value=1,step=1))
 on = st.sidebar.button('Optimize')  
 def neigbors_h(stories,park_loc,u,v):
@@ -1097,38 +1106,7 @@ if on:
         download=pd.concat([download,each])
     
         
-    
-    # محاسبه Final Score برای همه گزینه‌ها
-    scored_results = []
-    for solution in algorithm.result:
-        OB = []
-        OB_name = []
-        tr = 0
-        for i in true_indexes:
-            OB.append(solution.objectives[tr])
-            OB_name.append(my_list1[i])
-            tr += 1
-
-        normalized_ob = []
-        for i, val in enumerate(OB):
-            col = OB_name[i]
-            vals = [s.objectives[true_indexes.index(my_list1.index(col))] for s in algorithm.result]
-            min_val, max_val = min(vals), max(vals)
-            if max_val != min_val:
-                norm_val = (val - min_val) / (max_val - min_val)
-            else:
-                norm_val = 0
-            normalized_ob.append(norm_val)
-
-        score = sum([normalized_ob[i] * weights[OB_name[i]] for i in range(len(OB_name))])
-        scored_results.append((score, solution))
-
-    # مرتب‌سازی و انتخاب top-k
-    sorted_solutions = sorted(scored_results, key=lambda x: x[0])
-    top_solutions = [s[1] for s in sorted_solutions[:options]]
-
-    for solution in top_solutions:
-
+    for solution in algorithm.result[0:options]:
         st.header(f"Alternative {int(opt)}")
         opt+=1
         var=solution.variables
@@ -1552,6 +1530,14 @@ if on:
 
 else:
     st.write("Tap Toggle to Optimize")
+    
+    
+    
+
+        
+        
+
+
 
     
     
