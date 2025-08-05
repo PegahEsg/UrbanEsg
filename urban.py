@@ -906,7 +906,6 @@ if on:
     col=st.columns(options)
     opt=1
     download=pd.DataFrame()
-    
     for solution in algorithm.result:
         var=solution.variables
         OB=[]
