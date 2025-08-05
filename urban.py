@@ -761,16 +761,7 @@ def optimize(input):
     if EUI:
         EUI_C=np.mean(e_h_building)*1+(np.mean(e_c_building)+np.mean(e_l_building))*1.7
         if EUI_down<EUI_C<EUI_up:
-            Objectives.append(np.mean(EUI_C)
-
-    if Shade:
-        shading_result, _, _ = shading(BuildingShape, Rotation, input[10], Lengths, Widths, SiteLength, Site_Width, [s * 3.5 for s in stories])
-        is_shaded = [1 if i < 0.90 else 0 for i in shading_result]
-        shaded_percent = round(sum(is_shaded) / len(shading_result), 3) if len(shading_result) > 0 else 0
-
-        if "Shaded Area" in selected_metrics:
-            Objectives.append(shaded_percent)
-)
+            Objectives.append(np.mean(EUI_C))
         else:
             Objectives.append(EUI_C*10000000)
     
@@ -831,15 +822,6 @@ def optimize(input):
         co2_total=(sum(e_h_building)*0.21233 +sum(e_c_building)*0.18316 +sum(e_l_building)*0.21233)*Area+ total_co2
         if  co2_total<Co2_up:
             Objectives.append(co2_total)
-
-    if Shade:
-        shading_result, _, _ = shading(BuildingShape, Rotation, input[10], Lengths, Widths, SiteLength, Site_Width, [s * 3.5 for s in stories])
-        is_shaded = [1 if i < 0.90 else 0 for i in shading_result]
-        shaded_percent = round(sum(is_shaded) / len(shading_result), 3) if len(shading_result) > 0 else 0
-
-        if "Shaded Area" in selected_metrics:
-            Objectives.append(shaded_percent)
-
         else:
             Objectives.append(co2_total*10000000)       
     return Objectives 
