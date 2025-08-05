@@ -1037,61 +1037,61 @@ for i in true_indexes:
     res_com=res_com_loc
     commercial=[]
     cm=0
-    for i in res_com:
-        if i==0:
-            commercial.append(0)
-        else:
-            commercial.append(com_floor[cm])
-            cm+=1
-    building_coor=[]
-    for i in building_loc:
-        building_coor.append(parcels_loc[i])
+for i in res_com:
+    if i==0:
+        commercial.append(0)
+    else:
+        commercial.append(com_floor[cm])
+        cm+=1
+building_coor=[]
+for i in building_loc:
+    building_coor.append(parcels_loc[i])
 
-    s = set(building_loc)
-    park_loc = [x for x in list(range(n_parcel)) if x not in s]
-    park_coor=[]
-    for i in park_loc:
-            park_coor.append(parcels_loc[i])
+s = set(building_loc)
+park_loc = [x for x in list(range(n_parcel)) if x not in s]
+park_coor=[]
+for i in park_loc:
+    park_coor.append(parcels_loc[i])
 
-        x1=[]
-        y1=[]
-        for i in building_coor:
-            x1.append(i[0])
-            y1.append(i[1])
+x1=[]
+y1=[]
+for i in building_coor:
+    x1.append(i[0])
+    y1.append(i[1])
 
-        x2=[]
-        y2=[]
-        for i in park_coor:
-            x2.append(i[0])
-            y2.append(i[1])
-        xx=[]
-        #e2
-        for i in x1:
-            xx.append(i-(0)-Lengths/2)
-            xx.append(i+(0)+Lengths/2)
-        yy = []
-        for i in y1:
-            yy.append(i)
-            yy.append(i)
-        zz = [k*3.5 for k in stories]
+x2=[]
+y2=[]
+for i in park_coor:
+    x2.append(i[0])
+    y2.append(i[1])
+    
+xx=[]
+for i in x1:
+    xx.append(i-(0)-Lengths/2)
+    xx.append(i+(0)+Lengths/2)
+    yy = []
+for i in y1:
+    yy.append(i)
+    yy.append(i)
+zz = [k*3.5 for k in stories]
 
-        xx1=[]
-        for i in x2:
-            xx1.append(i)
-            xx1.append(i+9)
-        yy1=[]
-        for i in y2:
-            yy1.append(i)
-            yy1.append(i)
-        zz1=len(y2)*[0.2]+len(y2)*[0.2]
+xx1=[]
+for i in x2:
+    xx1.append(i)
+    xx1.append(i+9)
+yy1=[]
+for i in y2:
+    yy1.append(i)
+    yy1.append(i)
+zz1=len(y2)*[0.2]+len(y2)*[0.2]
 
-        xx2 =[]
-        for i in x1:
-            xx2.append(i-(0)-Lengths/2)
-            xx2.append(i+(0)+Lengths/2)
+xx2 =[]
+for i in x1:
+    xx2.append(i-(0)-Lengths/2)
+    xx2.append(i+(0)+Lengths/2)
 
-        yy2 = yy
-        zz2 = commercial
+    yy2 = yy
+    zz2 = commercial
 
         Area=Area_building(BuildingShape,Lengths,Widths)
         adjacency=adjacency_estimation(zz)
