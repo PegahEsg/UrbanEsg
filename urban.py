@@ -1,3 +1,4 @@
+download = pd.DataFrame()
 from platypus import NSGAII, Problem, Real,Permutation,Subset,CompoundOperator,SSX,SBX
 import joblib
 import joblib
@@ -1532,38 +1533,3 @@ else:
 
     
     
-
-# --- AHP User Selection and Scoring ---
-st.sidebar.markdown("### Select performance metrics and assign weights")
-
-available_metrics = ['Cooling (kWh/m2)', 'Heating (kWh/m2)', 'Lighting (kWh/m2)',
-                     'PV generation (kWh/m2)', 'SVF %', 'Visibility %']
-
-selected_metrics = []
-weights = {}
-
-for metric in available_metrics:
-    if st.sidebar.checkbox(metric, value=True):
-        selected_metrics.append(metric)
-        weights[metric] = st.sidebar.slider(f"Weight for {metric}", 0.0, 1.0, 0.2, 0.05)
-
-# Normalize weights
-if selected_metrics:
-    total_weight = sum(weights[m] for m in selected_metrics)
-    for m in selected_metrics:
-        weights[m] /= total_weight
-
-    # Scoring: higher is better
-    scoring_df = download[selected_metrics].copy()
-    scoring_df = (scoring_df - scoring_df.min()) / (scoring_df.max() - scoring_df.min())
-
-    for col in scoring_df.columns:
-        if "Cooling" in col or "Heating" in col or "Lighting" in col:
-            scoring_df[col] = 1 - scoring_df[col]
-
-    # Compute weighted score
-    download["Final Score"] = 0
-    for metric in selected_metrics:
-        download["Final Score"] += scoring_df[metric] * weights[metric]
-
-    download_sorted = download.sort_values(by="Final Score", ascending=False).head(top_k).reset_index(drop=True)
