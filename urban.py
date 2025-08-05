@@ -980,33 +980,33 @@ for idx, row in download_sorted.iterrows():
         else:
             stories=var[4]
 
-        elif 240<Densityeachbldg<=300:
-            if Bldg_Footprint==0.45:
-                stories=var[5]
-            else:
-                stories=var[4]
-        elif 300<Densityeachbldg<=360:
-            if Bldg_Footprint==0.45:
-                stories=var[7]
-            else:
-                stories=var[5]
+    elif 240<Densityeachbldg<=300:
+        if Bldg_Footprint==0.45:
+            stories=var[5]
+        else:
+            stories=var[4]
+    elif 300<Densityeachbldg<=360:
+        if Bldg_Footprint==0.45:
+            stories=var[7]
+        else:
+            stories=var[5]
 
-        elif 360<Densityeachbldg<=420:
-            if Bldg_Footprint==0.45:
-                stories=var[8]
-            else:
-                stories=var[6]
-        elif 420<Densityeachbldg<=480:
-            if Bldg_Footprint==0.45:
-                stories=var[9]
-            else:
-                stories=var[7]
-
-        elif 480<Densityeachbldg<=540:
+    elif 360<Densityeachbldg<=420:
+        if Bldg_Footprint==0.45:
             stories=var[8]
-
-        elif 540<Densityeachbldg<=700:
+        else:
+            stories=var[6]
+    elif 420<Densityeachbldg<=480:
+        if Bldg_Footprint==0.45:
             stories=var[9]
+        else:
+            stories=var[7]
+
+    elif 480<Densityeachbldg<=540:
+        stories=var[8]
+
+    elif 540<Densityeachbldg<=700:
+        stories=var[9]
 
     res_ratio=var[12][0]
     com_ratio=var[15][0]
