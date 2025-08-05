@@ -286,8 +286,17 @@ for i in range(len(my_list)):
     if my_list[i] == True:
         true_indexes.append(i)
 
-#options=int(st.sidebar.number_input("How many Alternative do you want?",min_value=1,max_value=5,value=1,step=1))
-top_k = st.sidebar.slider("How many top alternatives to show based on your weights?", 1, len(algorithm.result), 5)
+st.sidebar.subheader("Weighting for Final Decision")
+
+weight_cooling = st.sidebar.slider("Cooling Weight", 0.0, 1.0, 0.2, step=0.05)
+weight_heating = st.sidebar.slider("Heating Weight", 0.0, 1.0, 0.2, step=0.05)
+weight_lighting = st.sidebar.slider("Lighting Weight", 0.0, 1.0, 0.2, step=0.05)
+weight_pv = st.sidebar.slider("PV Weight", 0.0, 1.0, 0.2, step=0.05)
+weight_svf = st.sidebar.slider("SVF Weight", 0.0, 1.0, 0.2, step=0.05)
+weight_visibility = st.sidebar.slider("Visibility Weight", 0.0, 1.0, 0.2, step=0.05)
+
+normalize = st.sidebar.checkbox("Normalize weights (sum=1)", value=True)
+top_k = st.sidebar.slider("How many top alternatives to show?", min_value=1, max_value=10, value=3)
 
 st.sidebar.markdown("🎯 **Weight each selected objective for decision-making**")
 weights = {}
@@ -953,10 +962,12 @@ closest_k = score_df.sort_values('distance').head(top_k)['index'].tolist()
     opt=1
     download=pd.DataFrame()
 
-    for solution in algorithm.result:
-        var=solution.variables
-        OB=[]
-        OB_name=[]
+    for idx, row in download_sorted.iterrows():
+        solution = algorithm.result[row['index']]
+        var = solution.variables
+        st.header(f"Alternative {idx+1}")
+        st.dataframe(row)
+        
         data_general=pd.DataFrame([[green_ratio,var[0][0],var[1][0],var[2][0],var[12][0],var[15][0]]],columns=['Green Space Ratio','Rotation (Degree)', 'Street width (m)', 'Building footprint','Residental Ratio','Commercial Ratio'])
         
         Lengths = ((SiteLength-((v+1)*var[1][0]))/v)/2
