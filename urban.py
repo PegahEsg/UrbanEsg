@@ -1097,7 +1097,38 @@ if on:
         download=pd.concat([download,each])
     
         
-    for solution in algorithm.result[0:options]:
+    
+    # محاسبه Final Score برای همه گزینه‌ها
+    scored_results = []
+    for solution in algorithm.result:
+        OB = []
+        OB_name = []
+        tr = 0
+        for i in true_indexes:
+            OB.append(solution.objectives[tr])
+            OB_name.append(my_list1[i])
+            tr += 1
+
+        normalized_ob = []
+        for i, val in enumerate(OB):
+            col = OB_name[i]
+            vals = [s.objectives[true_indexes.index(my_list1.index(col))] for s in algorithm.result]
+            min_val, max_val = min(vals), max(vals)
+            if max_val != min_val:
+                norm_val = (val - min_val) / (max_val - min_val)
+            else:
+                norm_val = 0
+            normalized_ob.append(norm_val)
+
+        score = sum([normalized_ob[i] * weights[OB_name[i]] for i in range(len(OB_name))])
+        scored_results.append((score, solution))
+
+    # مرتب‌سازی و انتخاب top-k
+    sorted_solutions = sorted(scored_results, key=lambda x: x[0])
+    top_solutions = [s[1] for s in sorted_solutions[:options]]
+
+    for solution in top_solutions:
+
         st.header(f"Alternative {int(opt)}")
         opt+=1
         var=solution.variables
@@ -1521,3 +1552,6 @@ if on:
 
 else:
     st.write("Tap Toggle to Optimize")
+
+    
+    
