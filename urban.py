@@ -1558,17 +1558,15 @@ for score, solution in top_solutions:
         st.divider()
         
   
-    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-        download.to_excel(writer, sheet_name='Sheet1')
-        writer.close()
-    
-    st.download_button(
-        label="Download optimization results",
-        data=buffer.getvalue(),
-        file_name="optimization_results.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+        with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+            download.to_excel(writer, sheet_name='Sheet1')
         
+        st.download_button(
+            label="Download optimization results",
+            data=buffer.getvalue(),
+            file_name="optimization_results.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
 
 
 
