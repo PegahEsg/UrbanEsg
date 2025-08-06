@@ -1147,7 +1147,7 @@ if on:
         each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
         each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
         
-        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 10.0
+        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 2.5
         each["Cooling (kWh/m2)"] = each["Cooling (kWh/m2)"] * 0.6
         each["Heating (kWh/m2)"] = each["Heating (kWh/m2)"] * 0.8
         each["Lighting (kWh/m2)"] = each["Lighting (kWh/m2)"] * 0.7
@@ -1445,7 +1445,7 @@ if on:
         each['Co2']=((each['Cooling (kWh/m2)']*Area + each['Lighting (kWh/m2)']*Area)*0.21233+(each['Heating (kWh/m2)']*Area*0.18316))*stories
         #each['EUI(kWh/m2)']=((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1+(each['Heating (kWh/m2)']*3))*0.9
         each['EUI(kWh/m2)'] = ((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1.7 + (each['Heating (kWh/m2)']*1))
-        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 10.0
+        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 2.5
 
         
         # Convert columns to numeric, ignoring errors for non-convertible columns
