@@ -302,10 +302,10 @@ objective_directions = {
 
 selected_metrics = [my_list1[i] for i in true_indexes]
 
-st.sidebar.markdown("### ⚖️ Weight assignment to selected metrics")
+st.sidebar.markdown("### Weight assignment to selected metrics")
 weights = {}
 for metric in selected_metrics:
-    weights[metric] = st.sidebar.slider(f"Weight for {metric}", 0.0, 10.0, 1.0, 0.5)
+    weights[metric] = st.sidebar.slider(f"Weight for {metric}", 0.0, 10.0, 1.0, 1.0)
 
 
 options=int(st.sidebar.number_input("How many Alternative do you want?",min_value=1,max_value=5,value=1,step=1))
@@ -983,7 +983,7 @@ if on:
             res_com_loc=var[14]
             com_floor=var[16]
 
-        my_list1=["EUI","Cooling","Heating","Lighting","Roof Hot","Hours","Roof Cold","SVF","Visibility","PV","Co2"]
+        my_list1=["EUI","Cooling","Heating","Lighting","Radiation-Hottest week","Solar Hours","Radiation-Coldest week","SVF","Visibility","PV Power","CO2 Emission"]
         
         tr=0
         for i in true_indexes:
