@@ -285,7 +285,7 @@ for i in range(len(my_list)):
         true_indexes.append(i)
         
 #options=int(st.sidebar.number_input("How many Alternative do you want?",min_value=1,max_value=5,value=1,step=1))
-on = st.sidebar.button('Optimize') 
+
 
 my_list1 = ["EUI","Cooling","Heating","Lighting","Radiation-Hottest week","Solar Hours","Radiation-Coldest week","SVF","Visibility","PV Power","CO2 Emission"]
 
@@ -311,7 +311,7 @@ for metric in selected_metrics:
     weights[metric] = st.sidebar.slider(f"Weight for {metric}", 1.0, 10.0, 1.0, 1.0)
 
 
-
+on = st.sidebar.button('Optimize') 
 
 def calculate_weighted_score(solution, selected_metrics, weights, my_list1, true_indexes):
     metric_ranges = {
