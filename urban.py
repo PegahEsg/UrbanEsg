@@ -111,9 +111,9 @@ if ad==True:
             Lighting_up=40
     st.sidebar.header('Environmental Metrics')
     
-    Co2=st.sidebar.checkbox('Co2 Emission-kg')
+    Co2=st.sidebar.checkbox('CO2 Emission-kg')
     if Co2:
-        Co2_up = st.sidebar.slider("Co2",5,200,5)
+        Co2_up = st.sidebar.slider("CO2",5,200,5)
     
     
     Hours=st.sidebar.checkbox('Solar Hours (Hr)')
@@ -147,7 +147,7 @@ if ad==True:
     roof_hot=st.sidebar.checkbox('Radiation (Hottest Week)-kWh/m2')
     if roof_hot:
         roof_hot_up = st.sidebar.slider("Roof Hot up",100,1000,50)
-    st.sidebar.header('Livability Metrics')
+    st.sidebar.header('Physical Metrics')
     SVF=st.sidebar.checkbox('Sky View Factor (%)')
     if SVF:
         SVF1= st.sidebar.select_slider("Sky View Factor",options=['Limited sky view','Moderate sky view','Extensive sky view'])
@@ -177,7 +177,7 @@ if ad==True:
             Visibility_down=75
             Visibility_up=100
     
-    st.sidebar.header('Renewable')
+    st.sidebar.header('Renewable Energy')
     PV=st.sidebar.checkbox('PV Power Generation (%)')
     if PV:
         #PV_down = st.sidebar.slider("PV",100,1000,50)
