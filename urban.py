@@ -309,12 +309,25 @@ for metric in selected_metrics:
 
 
 
-def calculate_weighted_score(solution, selected_metrics, weights, my_list1, true_indexes):
+def calculate_weighted_score(solution, weights):
+    normalizers = {
+        "EUI": 400,
+        "Heating": 200,
+        "Cooling": 300,
+        "Lighting": 100,
+        "PV": 300,
+        "SVF": 1,
+        "Visibility": 100,
+        "Shading": 100,
+        "Sky View": 1
+    }
+
     score = 0
-    for i in range(len(true_indexes)):
-        metric_name = my_list1[true_indexes[i]]
-        weight = weights.get(metric_name, 1)
-        score += solution.objectives[i] * weight
+    for metric, weight in weights.items():
+        if metric in solution:
+            value = solution[metric]
+            normalized_value = value / normalizers.get(metric, 1)
+            score += normalized_value * weight
     return score
 
 options=int(st.sidebar.number_input("How many Alternative do you want?",min_value=1,max_value=5,value=1,step=1))
