@@ -967,7 +967,7 @@ if on:
     problem.function = optimize
     algorithm = NSGAII(problem, variator=CompoundOperator(SSX(),SBX()))
     algorithm.run(100)
-    st.write(f"Number of Pareto solutions: {len(algorithm.result)}")
+    #st.write(f"Number of Pareto solutions: {len(algorithm.result)}")
     
     data=pd.DataFrame()
     col=st.columns(options)
@@ -1145,12 +1145,13 @@ if on:
 
         
         each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
-        #each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
+        each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
         
+        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 10.0
         each["Cooling (kWh/m2)"] = each["Cooling (kWh/m2)"] * 0.6
         each["Heating (kWh/m2)"] = each["Heating (kWh/m2)"] * 0.8
         each["Lighting (kWh/m2)"] = each["Lighting (kWh/m2)"] * 0.7
-        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 10.0
+       
         
         each['Co2']=each['Cooling (kWh/m2)']*1.7 + each['Heating (kWh/m2)']*1 +each['Lighting (kWh/m2)']*1.7
         each['EUI']=each['Cooling (kWh/m2)']*1.7 + each['Heating (kWh/m2)']*1 +each['Lighting (kWh/m2)']*1.7
@@ -1161,9 +1162,7 @@ if on:
         each=pd.concat([each,each_parks])
         each=pd.concat([each,data_general])
         
-        #if "Solar Hours (Hours)" in each.columns:
-            #each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"].apply(lambda x: round(x * 10, 2) if pd.notna(x) else x)
-        
+        st.dataframe(each)
         download=pd.concat([download,each])
     
         
