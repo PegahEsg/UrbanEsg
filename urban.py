@@ -1171,7 +1171,7 @@ if on:
         score = calculate_weighted_score(solution, selected_metrics, weights, my_list1, true_indexes)
         scored_solutions.append((score, solution))
 
-    scored_solutions.sort(key=lambda x: x[0])  # lower score is better
+    scored_solutions.sort(key=lambda x: x[0], reverse=True)  # higher score is better
     top_solutions = scored_solutions[:options]
 
     for score, solution in top_solutions:
