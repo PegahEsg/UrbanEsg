@@ -1558,7 +1558,7 @@ if on:
         st.divider()
         
   
-        with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
             download.to_excel(writer, sheet_name='Sheet1')
         
 st.download_button(
