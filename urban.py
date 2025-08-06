@@ -1557,7 +1557,7 @@ for score, solution in top_solutions:
                 
         st.divider()
         
-    buffer = io.BytesIO()  # مطمئن شو buffer تعریف شده
+  
     with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
         download.to_excel(writer, sheet_name='Sheet1')
         writer.close()
