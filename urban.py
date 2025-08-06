@@ -1162,7 +1162,7 @@ if on:
         each=pd.concat([each,each_parks])
         each=pd.concat([each,data_general])
         
-        st.dataframe(each)
+        #st.dataframe(each)
         download=pd.concat([download,each])
     
         
