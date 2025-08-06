@@ -279,7 +279,7 @@ else:
         
 
 true_indexes=[]
-my_list=[EUI,Cooling,Heating,Lighting,roof_hot,Hours,roof_cold,SVF,Visibility,PV,Co2]
+my_list=["EUI","Cooling","Heating","Lighting","Radiation-Hottest week","Solar Hours","Radiation-Coldest week","SVF","Visibility","PV Power","CO2 Emission"]
 for i in range(len(my_list)):
     if my_list[i] == True:
         true_indexes.append(i)
@@ -1445,7 +1445,7 @@ if on:
         each['Co2']=((each['Cooling (kWh/m2)']*Area + each['Lighting (kWh/m2)']*Area)*0.21233+(each['Heating (kWh/m2)']*Area*0.18316))*stories
         #each['EUI(kWh/m2)']=((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1+(each['Heating (kWh/m2)']*3))*0.9
         each['EUI(kWh/m2)'] = ((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1.7 + (each['Heating (kWh/m2)']*1))
-
+        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 10.0
 
         
         # Convert columns to numeric, ignoring errors for non-convertible columns
