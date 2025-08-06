@@ -1546,13 +1546,5 @@ if on:
 else:
     st.write("Tap Toggle to Optimize")
     
-    
-    
-
-        
-        
-
-
-
-    
+   
     
