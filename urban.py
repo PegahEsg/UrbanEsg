@@ -769,7 +769,7 @@ def optimize(input):
     Objectives=[]
 
     if EUI:
-        EUI_C=np.mean(e_h_building)*1+(np.mean(e_c_building)+np.mean(e_l_building))*1.7
+        #EUI_C=np.mean(e_h_building)*1+(np.mean(e_c_building)+np.mean(e_l_building))*1.7
         if EUI_down<EUI_C<EUI_up:
             Objectives.append(np.mean(EUI_C))
         else:
