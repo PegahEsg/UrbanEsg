@@ -288,6 +288,14 @@ my_list1 = ["EUI","Cooling","Heating","Lighting","Radiation-Hottest week","Solar
 
 objective_directions = {
 
+def calculate_weighted_score(objectives, selected_metrics, weights):
+    score = 0
+    total_weight = sum(weights[metric] for metric in selected_metrics)
+    for metric, value in zip(selected_metrics, objectives):
+        w = weights[metric]
+        score += w * value
+    return score / total_weight
+
 "EUI": "min",
     "Cooling": "min",
     "Heating": "min",
@@ -300,13 +308,6 @@ objective_directions = {
     "PV": "max",
     "Co2": "min"
 }
-def calculate_weighted_score(objectives, selected_metrics, weights):
-    score = 0
-    total_weight = sum(weights[metric] for metric in selected_metrics)
-    for metric, value in zip(selected_metrics, objectives):
-        w = weights[metric]
-        score += w * value
-    return score / total_weight
 
 selected_metrics = [my_list1[i] for i in true_indexes]
 
@@ -933,6 +934,18 @@ if on:
     algorithm = NSGAII(problem, variator=CompoundOperator(SSX(),SBX()))
     algorithm.run(100)
 
+# محاسبه اسکور برای هر گزینه روی جبهه پارتو
+scored_solutions = []
+for solution in algorithm.result:
+    score = calculate_weighted_score(solution.objectives, selected_metrics, weights)
+    scored_solutions.append((solution, score))
+
+# مرتب‌سازی بر اساس امتیاز نهایی
+scored_solutions.sort(key=lambda x: x[1], reverse=True)
+
+# انتخاب top-k آلترناتیو
+top_solutions = scored_solutions[:options]
+
 
     data=pd.DataFrame()
     col=st.columns(options)
@@ -1129,7 +1142,7 @@ if on:
         download=pd.concat([download,each])
     
         
-    for solution in algorithm.result[0:options]:
+    for solution, score in top_solutions:
         score = calculate_weighted_score(solution.objectives, selected_metrics, weights)
         st.header(f"Alternative {int(opt)}")
         st.markdown(f"<p style='font-size:16px;'>🎯 Final Score (Weighted Sum): <strong>{round(score, 2)}</strong></p>", unsafe_allow_html=True)
