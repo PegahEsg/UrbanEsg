@@ -874,39 +874,37 @@ def optimize(input):
     return Objectives 
     
 def X_var():
-    
-    
-    var0 = Subset([-45,0,45],1) #Rotation
-    var1 = Subset([6,12],1) #Street width
-    var2 = Subset([0.45,0.6],1) #Building Footprint
-    var3 = Subset([1,1],1) #WWR
-           
-    
-    
-    var4 = Subset(2*(n_parcel - round(n_parcel * green_ratio))*[4,5],(n_parcel - round(n_parcel * green_ratio))*2) #Stories
-    var5 = Subset(2*(n_parcel - round(n_parcel * green_ratio))*[4,5,6],(n_parcel - round(n_parcel * green_ratio))*2) #Stories
-    var6 = Subset(2*(n_parcel - round(n_parcel * green_ratio))*[5,6,7],(n_parcel - round(n_parcel * green_ratio))*2) #Stories
-    var7 = Subset(2*(n_parcel - round(n_parcel * green_ratio))*[6,7,8],(n_parcel - round(n_parcel * green_ratio))*2) #Stories
-    var8 = Subset(2*(n_parcel - round(n_parcel * green_ratio))*[7,8,9],(n_parcel - round(n_parcel * green_ratio))*2) #Stories
-    var9 = Subset(2*(n_parcel - round(n_parcel * green_ratio))*[8,9,10],(n_parcel - round(n_parcel * green_ratio))*2) #Stories
-    
-    var10 = Subset(list(range(n_parcel)),n_parcel - round(n_parcel * green_ratio))
-    var11=Subset([1,2,3]*len(one_nim)*2,len(one_nim)*2) #Com_floor_vaghti nesfe mahale edarie
-    var12=Subset([0.5,0.7],1) #res_ratio
+    var0 = Subset([-45, 0, 45], 1)  # Rotation
+    var1 = Subset([6, 12], 1)       # Street width
+    var2 = Subset([0.45, 0.6], 1)   # Building Footprint
+    var3 = Subset([1, 1], 1)        # WWR
 
-    var13=Permutation((zero_nim+one_nim))
-    var14=Permutation((zero_haf+one_haf))
-    
-    var15=Subset([0.1,0.2,0.3],1) #com_ratio
-    var16=Subset([1,2,3]*len(one_nim)*2,len(one_haf)*2) #Com_floor_vaghti 0.3 mahale edarie
-    return var0,var1,var2,var3,var4,var5,var6,var7,var8,var9,var10,var11,var12,var13,var14,var15,var16
-        
-if on:    
+    var4 = Subset(2 * (n_parcel - round(n_parcel * green_ratio)) * [4, 5], (n_parcel - round(n_parcel * green_ratio)) * 2)
+    var5 = Subset(2 * (n_parcel - round(n_parcel * green_ratio)) * [4, 5, 6], (n_parcel - round(n_parcel * green_ratio)) * 2)
+    var6 = Subset(2 * (n_parcel - round(n_parcel * green_ratio)) * [5, 6, 7], (n_parcel - round(n_parcel * green_ratio)) * 2)
+    var7 = Subset(2 * (n_parcel - round(n_parcel * green_ratio)) * [6, 7, 8], (n_parcel - round(n_parcel * green_ratio)) * 2)
+    var8 = Subset(2 * (n_parcel - round(n_parcel * green_ratio)) * [7, 8, 9], (n_parcel - round(n_parcel * green_ratio)) * 2)
+    var9 = Subset(2 * (n_parcel - round(n_parcel * green_ratio)) * [8, 9, 10], (n_parcel - round(n_parcel * green_ratio)) * 2)
+
+    var10 = Subset(list(range(n_parcel)), n_parcel - round(n_parcel * green_ratio))
+    var11 = Subset([1, 2, 3] * len(one_nim) * 2, len(one_nim) * 2)  # Com_floor_vaghti nesfe mahale edarie
+    var12 = Subset([0.5, 0.7], 1)  # res_ratio
+
+    var13 = Permutation(zero_nim + one_nim)
+    var14 = Permutation(zero_haf + one_haf)
+
+    var15 = Subset([0.1, 0.2, 0.3], 1)  # com_ratio
+    var16 = Subset([1, 2, 3] * len(one_nim) * 2, len(one_haf) * 2)  # Com_floor_vaghti 0.3 mahale edarie
+
+    return var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11, var12, var13, var14, var15, var16
+
+
+# خارج از تابع:
+if on:
     n_park = n_park_f(n_parcel)
     parcel_list = list(range(n_parcel))
     park_parcels = np.sort(np.random.choice(parcel_list, size=n_park, replace=False))
     building_parcels = [i for i in parcel_list if i not in park_parcels]
-
     parcels_X = []
     #arman
     for i in range(u):
