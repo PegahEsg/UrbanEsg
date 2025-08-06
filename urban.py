@@ -967,7 +967,7 @@ if on:
     problem.function = optimize
     algorithm = NSGAII(problem, variator=CompoundOperator(SSX(),SBX()))
     algorithm.run(100)
-
+    print(f"Number of Pareto solutions: {len(algorithm.result)}")
 
     data=pd.DataFrame()
     col=st.columns(options)
