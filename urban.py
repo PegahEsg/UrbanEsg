@@ -288,7 +288,15 @@ my_list1 = ["EUI","Cooling","Heating","Lighting","Radiation-Hottest week","Solar
 
 objective_directions = {
 
-    "EUI": "min",
+def calculate_weighted_score(objectives, selected_metrics, weights):
+    score = 0
+    total_weight = sum(weights[metric] for metric in selected_metrics)
+    for metric, value in zip(selected_metrics, objectives):
+        w = weights[metric]
+        score += w * value
+    return score / total_weight
+
+"EUI": "min",
     "Cooling": "min",
     "Heating": "min",
     "Lighting": "min",
@@ -301,13 +309,6 @@ objective_directions = {
     "Co2": "min"
 }
 
-def calculate_weighted_score(objectives, selected_metrics, weights):
-    score = 0
-    for metric, value in zip(selected_metrics, objectives):
-        w = weights[metric]
-        score += w * value
-    return score
-    
 selected_metrics = [my_list1[i] for i in true_indexes]
 
 st.sidebar.markdown("### Weight assignment to selected metrics")
@@ -1132,7 +1133,7 @@ if on:
     for solution in algorithm.result[0:options]:
         score = calculate_weighted_score(solution.objectives, selected_metrics, weights)
         st.header(f"Alternative {int(opt)}")
-        st.subheader(f"Final Score (Weighted Sum): {round(score, 2)}")
+        st.markdown(f"<p style='font-size:16px;'>🎯 Final Score (Weighted Sum): <strong>{round(score, 2)}</strong></p>", unsafe_allow_html=True)
         opt+=1
         var=solution.variables
         OB=[]
