@@ -1150,7 +1150,7 @@ if on:
         each["Cooling (kWh/m2)"] = each["Cooling (kWh/m2)"] * 0.6
         each["Heating (kWh/m2)"] = each["Heating (kWh/m2)"] * 0.8
         each["Lighting (kWh/m2)"] = each["Lighting (kWh/m2)"] * 0.7
-        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 10.0
+
         
         each['Co2']=each['Cooling (kWh/m2)']*1.7 + each['Heating (kWh/m2)']*1 +each['Lighting (kWh/m2)']*1.7
         each['EUI']=each['Cooling (kWh/m2)']*1.7 + each['Heating (kWh/m2)']*1 +each['Lighting (kWh/m2)']*1.7
@@ -1160,6 +1160,7 @@ if on:
         
         each=pd.concat([each,each_parks])
         each=pd.concat([each,data_general])
+        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 10.0
         
         download=pd.concat([download,each])
     
