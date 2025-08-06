@@ -324,10 +324,12 @@ def calculate_weighted_score(solution, selected_metrics, weights, my_list1, true
 
     score = 0
     for metric, weight in zip(selected_metrics, weights):
-        if metric in solution:
-            value = solution[metric]
+        if metric in my_list1:
+            idx = my_list1.index(metric)
+            value = solution.objectives[idx]
             normalized_value = value / normalizers.get(metric, 1)
             score += normalized_value * weight
+
     return score
 
 options=int(st.sidebar.number_input("How many Alternative do you want?",min_value=1,max_value=5,value=1,step=1))
