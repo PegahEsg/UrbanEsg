@@ -279,7 +279,7 @@ else:
         
 
 true_indexes=[]
-my_list=["EUI","Cooling","Heating","Lighting","Radiation-Hottest week","Solar Hours","Radiation-Coldest week","SVF","Visibility","PV Power","CO2 Emission"]
+my_list=[EUI,Cooling,Heating,Lighting,roof_hot,Hours,roof_cold,SVF,Visibility,PV,Co2]
 for i in range(len(my_list)):
     if my_list[i] == True:
         true_indexes.append(i)
