@@ -283,6 +283,9 @@ my_list=[EUI,Cooling,Heating,Lighting,roof_hot,Hours,roof_cold,SVF,Visibility,PV
 for i in range(len(my_list)):
     if my_list[i] == True:
         true_indexes.append(i)
+        
+#options=int(st.sidebar.number_input("How many Alternative do you want?",min_value=1,max_value=5,value=1,step=1))
+on = st.sidebar.button('Optimize') 
 
 my_list1 = ["EUI","Cooling","Heating","Lighting","Radiation-Hottest week","Solar Hours","Radiation-Coldest week","SVF","Visibility","PV Power","CO2 Emission"]
 
@@ -898,8 +901,8 @@ def X_var():
 
     return var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11, var12, var13, var14, var15, var16
 
-on = st.toggle("Filter and Rank Pareto Front")
-# خارج از تابع:
+
+
 if on:
     n_park = n_park_f(n_parcel)
     parcel_list = list(range(n_parcel))
