@@ -288,6 +288,14 @@ my_list1 = ["EUI","Cooling","Heating","Lighting","Radiation-Hottest week","Solar
 
 objective_directions = {
 
+def calculate_weighted_score(objectives, selected_metrics, weights):
+    score = 0
+    total_weight = sum(weights[metric] for metric in selected_metrics)
+    for metric, value in zip(selected_metrics, objectives):
+        w = weights[metric]
+        score += w * value
+    return score / total_weight
+
 "EUI": "min",
     "Cooling": "min",
     "Heating": "min",
@@ -300,14 +308,6 @@ objective_directions = {
     "PV": "max",
     "Co2": "min"
 }
-
-def calculate_weighted_score(objectives, selected_metrics, weights):
-    score = 0
-    total_weight = sum(weights[metric] for metric in selected_metrics)
-    for metric, value in zip(selected_metrics, objectives):
-        w = weights[metric]
-        score += w * value
-    return score / total_weight
 
 selected_metrics = [my_list1[i] for i in true_indexes]
 
@@ -947,627 +947,628 @@ scored_solutions.sort(key=lambda x: x[1], reverse=True)
 top_solutions = scored_solutions[:options]
 
 
+
 data=pd.DataFrame()
 col=st.columns(options)
 opt=1
 download=pd.DataFrame()
-    for solution in algorithm.result:
-        var=solution.variables
-        OB=[]
-        OB_name=[]
-        data_general=pd.DataFrame([[green_ratio,var[0][0],var[1][0],var[2][0],var[12][0],var[15][0]]],columns=['Green Space Ratio','Rotation (Degree)', 'Street width (m)', 'Building footprint','Residental Ratio','Commercial Ratio'])
+for solution in algorithm.result:
+    var=solution.variables
+    OB=[]
+    OB_name=[]
+    data_general=pd.DataFrame([[green_ratio,var[0][0],var[1][0],var[2][0],var[12][0],var[15][0]]],columns=['Green Space Ratio','Rotation (Degree)', 'Street width (m)', 'Building footprint','Residental Ratio','Commercial Ratio'])
         
-        Lengths = ((SiteLength-((v+1)*var[1][0]))/v)/2
-        Widths = ((100-(u+1)*var[1][0])/u)*var[2][0]
-        Bldg_Footprint=var[2][0]
-        if 180<=Densityeachbldg<=240:
-            if Bldg_Footprint==0.45:
-                stories=var[4]
-            else:
-                stories=var[4]
+    Lengths = ((SiteLength-((v+1)*var[1][0]))/v)/2
+    Widths = ((100-(u+1)*var[1][0])/u)*var[2][0]
+    Bldg_Footprint=var[2][0]
+    if 180<=Densityeachbldg<=240:
+        if Bldg_Footprint==0.45:
+            stories=var[4]
+        else:
+            stories=var[4]
 
-        elif 240<Densityeachbldg<=300:
-            if Bldg_Footprint==0.45:
-                stories=var[5]
-            else:
-                stories=var[4]           
-        elif 300<Densityeachbldg<=360:
-            if Bldg_Footprint==0.45:
-                stories=var[7]
-            else:
-                stories=var[5]
+    elif 240<Densityeachbldg<=300:
+        if Bldg_Footprint==0.45:
+            stories=var[5]
+        else:
+            stories=var[4]           
+    elif 300<Densityeachbldg<=360:
+        if Bldg_Footprint==0.45:
+            stories=var[7]
+        else:
+            stories=var[5]
 
-        elif 360<Densityeachbldg<=420:
-            if Bldg_Footprint==0.45:
-                stories=var[8]
-            else:
-                stories=var[6]
-        elif 420<Densityeachbldg<=480:
-            if Bldg_Footprint==0.45:
-                stories=var[9]
-            else:
-                stories=var[7]
-
-        elif 480<Densityeachbldg<=540:
+    elif 360<Densityeachbldg<=420:
+        if Bldg_Footprint==0.45:
             stories=var[8]
-
-        elif 540<Densityeachbldg<=700:
+        else:
+            stories=var[6]
+    elif 420<Densityeachbldg<=480:
+        if Bldg_Footprint==0.45:
             stories=var[9]
-        
-        res_ratio=var[12][0]
-        com_ratio=var[15][0]
-
-        if res_ratio==0.5:
-            res_com_loc=var[13]
-            com_floor=var[11]
         else:
-            res_com_loc=var[14]
-            com_floor=var[16]
+            stories=var[7]
 
-        my_list1=["EUI","Cooling","Heating","Lighting","Radiation-Hottest week","Solar Hours","Radiation-Coldest week","SVF","Visibility","PV Power","CO2 Emission"]
+    elif 480<Densityeachbldg<=540:
+        stories=var[8]
+
+    elif 540<Densityeachbldg<=700:
+        stories=var[9]
         
-        tr=0
-        for i in true_indexes:
-            OB.append(solution.objectives[tr])
-            OB_name.append(my_list1[i])
-            tr+=1
+    res_ratio=var[12][0]
+    com_ratio=var[15][0]
+
+    if res_ratio==0.5:
+        res_com_loc=var[13]
+        com_floor=var[11]
+    else:
+        res_com_loc=var[14]
+        com_floor=var[16]
+
+    my_list1=["EUI","Cooling","Heating","Lighting","Radiation-Hottest week","Solar Hours","Radiation-Coldest week","SVF","Visibility","PV Power","CO2 Emission"]
         
-        building_loc=var[10]
-        if var[12][0]==0.5:
-            res_com_loc=var[13]
-            com_floor=var[11]
+    tr=0
+    for i in true_indexes:
+        OB.append(solution.objectives[tr])
+        OB_name.append(my_list1[i])
+        tr+=1
+        
+    building_loc=var[10]
+    if var[12][0]==0.5:
+        res_com_loc=var[13]
+        com_floor=var[11]
+    else:
+        res_com_loc=var[14]
+        com_floor=var[16]
+            
+    res_com=res_com_loc
+    commercial=[]
+    cm=0
+    for i in res_com:
+        if i==0:
+            commercial.append(0)
         else:
-            res_com_loc=var[14]
-            com_floor=var[16]
-            
-        res_com=res_com_loc
-        commercial=[]
-        cm=0
-        for i in res_com:
-            if i==0:
-                commercial.append(0)
-            else:
-                commercial.append(com_floor[cm])
-                cm+=1
-        building_coor=[]
-        for i in building_loc:
-            building_coor.append(parcels_loc[i])
+            commercial.append(com_floor[cm])
+            cm+=1
+    building_coor=[]
+    for i in building_loc:
+        building_coor.append(parcels_loc[i])
         
-        s = set(building_loc)
-        park_loc = [x for x in list(range(n_parcel)) if x not in s]
-        park_coor=[]
-        for i in park_loc:
-            park_coor.append(parcels_loc[i])
+    s = set(building_loc)
+    park_loc = [x for x in list(range(n_parcel)) if x not in s]
+    park_coor=[]
+    for i in park_loc:
+        park_coor.append(parcels_loc[i])
 
-        x1=[]
-        y1=[]
-        for i in building_coor:      
-            x1.append(i[0])
-            y1.append(i[1])
+    x1=[]
+    y1=[]
+    for i in building_coor:      
+        x1.append(i[0])
+        y1.append(i[1])
             
-        x2=[]
-        y2=[]
-        for i in park_coor:
-            x2.append(i[0])
-            y2.append(i[1])
-        xx=[]
-        #e2
-        for i in x1:
-            xx.append(i-(0)-Lengths/2)
-            xx.append(i+(0)+Lengths/2)
-        yy = []
-        for i in y1:
-            yy.append(i)
-            yy.append(i)
-        zz = [k*3.5 for k in stories]
+    x2=[]
+    y2=[]
+    for i in park_coor:
+        x2.append(i[0])
+        y2.append(i[1])
+    xx=[]
+    #e2
+    for i in x1:
+        xx.append(i-(0)-Lengths/2)
+        xx.append(i+(0)+Lengths/2)
+    yy = []
+    for i in y1:
+        yy.append(i)
+        yy.append(i)
+    zz = [k*3.5 for k in stories]
         
-        xx1=[]
-        for i in x2:
-            xx1.append(i)
-            xx1.append(i+9)
-        yy1=[]
-        for i in y2:
-            yy1.append(i)
-            yy1.append(i)
-        zz1=len(y2)*[0.2]+len(y2)*[0.2]
+    xx1=[]
+    for i in x2:
+        xx1.append(i)
+        xx1.append(i+9)
+    yy1=[]
+    for i in y2:
+        yy1.append(i)
+        yy1.append(i)
+    zz1=len(y2)*[0.2]+len(y2)*[0.2]
         
-        xx2 =[]
-        for i in x1:
-            xx2.append(i-(0)-Lengths/2)
-            xx2.append(i+(0)+Lengths/2)
+    xx2 =[]
+    for i in x1:
+        xx2.append(i-(0)-Lengths/2)
+        xx2.append(i+(0)+Lengths/2)
            
-        yy2 = yy
-        zz2 = commercial
+    yy2 = yy
+    zz2 = commercial
                        
-        Area=Area_building(BuildingShape,Lengths,Widths)
-        adjacency=adjacency_estimation(zz)
-        height=neigbors_h(zz,park_loc,u,v) #### 
-        building_loc_copy=building_loc.copy()*2
-        Rotation=var[0][0]
-        sum_res=[]
-        sum_com=[]
-        for s,rc in zip(zz,res_com_loc):
-            if rc==0:
-                sum_res.append(s/3.5)
-            else:
-                sum_com.append(s/3.5)
-        #st.write(Area,sum_res,sum_com)
-        nafar_res1=round((sum(sum_res)*Area)/17) #####
-        nafar_office=round(((sum(sum_com)*var[15][0])*Area)/9.3)
-        nafar_comm=round(((sum(sum_com)*(1-var[15][0]))*Area)/6.2)
-        Machine_res=round(nafar_res1/4)
-        Machine_office=round(nafar_office/4)
-        Machine_comm=round(nafar_comm/4)   
-        lowest_length=round(var[1][0], 2) #round(Widths+Lengths,2)
-        longest_length=round((Lengths * u * 2) + (Widths * v) + (var[1][0] * ((u *2) - 1)), 2) #round(max((u*Widths)+Lengths,(v*Lengths)+Widths),2)
+    Area=Area_building(BuildingShape,Lengths,Widths)
+    adjacency=adjacency_estimation(zz)
+    height=neigbors_h(zz,park_loc,u,v) #### 
+    building_loc_copy=building_loc.copy()*2
+    Rotation=var[0][0]
+    sum_res=[]
+    sum_com=[]
+    for s,rc in zip(zz,res_com_loc):
+        if rc==0:
+            sum_res.append(s/3.5)
+        else:
+            sum_com.append(s/3.5)
+    #st.write(Area,sum_res,sum_com)
+    nafar_res1=round((sum(sum_res)*Area)/17) #####
+    nafar_office=round(((sum(sum_com)*var[15][0])*Area)/9.3)
+    nafar_comm=round(((sum(sum_com)*(1-var[15][0]))*Area)/6.2)
+    Machine_res=round(nafar_res1/4)
+    Machine_office=round(nafar_office/4)
+    Machine_comm=round(nafar_comm/4)   
+    lowest_length=round(var[1][0], 2) #round(Widths+Lengths,2)
+    longest_length=round((Lengths * u * 2) + (Widths * v) + (var[1][0] * ((u *2) - 1)), 2) #round(max((u*Widths)+Lengths,(v*Lengths)+Widths),2)
 
-        num_gas_car=int((Machine_res+Machine_office+Machine_comm)*gas_car_rate) #####
-        num_cng_car=int((Machine_res+Machine_office+Machine_comm)*(1-gas_car_rate))###
+    num_gas_car=int((Machine_res+Machine_office+Machine_comm)*gas_car_rate) #####
+    num_cng_car=int((Machine_res+Machine_office+Machine_comm)*(1-gas_car_rate))###
 
 
-        total_co2_gas=round(0.07956*num_gas_car*2.31*longest_length,2) #####
-        total_co2_CNG=round(0.06453*num_gas_car* 2.75*longest_length,2) #####
-        total_co2=round(total_co2_gas+total_co2_CNG,2) #####
+    total_co2_gas=round(0.07956*num_gas_car*2.31*longest_length,2) #####
+    total_co2_CNG=round(0.06453*num_gas_car* 2.75*longest_length,2) #####
+    total_co2=round(total_co2_gas+total_co2_CNG,2) #####
 
                 
-        r_pv_building,e_c_building,e_h_building,e_l_building,en_h_building,hours_building,en_co_building,l_s_building,l_v_building=predictive_model(BuildingShape,green_ratio,SiteLength,var[0][0],var[1][0],var[2][0],Densityeachbldg,var[3][0],Lengths,Widths,u,v,zz,Area,adjacency,height,dimention,var[12][0],var[15][0],com_floor,res_com_loc,building_loc_copy)
-        r_pv_park,e_c_park,e_h_park,e_l_park,en_h_park,hours_park,en_co_park,l_s_park,l_v_park=predictive_model_park(BuildingShape,green_ratio,SiteLength,var[0][0],var[1][0],var[2][0],Lengths,Widths,u,v,Area,height,dimention,park_loc)
+    r_pv_building,e_c_building,e_h_building,e_l_building,en_h_building,hours_building,en_co_building,l_s_building,l_v_building=predictive_model(BuildingShape,green_ratio,SiteLength,var[0][0],var[1][0],var[2][0],Densityeachbldg,var[3][0],Lengths,Widths,u,v,zz,Area,adjacency,height,dimention,var[12][0],var[15][0],com_floor,res_com_loc,building_loc_copy)
+    r_pv_park,e_c_park,e_h_park,e_l_park,en_h_park,hours_park,en_co_park,l_s_park,l_v_park=predictive_model_park(BuildingShape,green_ratio,SiteLength,var[0][0],var[1][0],var[2][0],Lengths,Widths,u,v,Area,height,dimention,park_loc)
 
 
-        if BuildingShape==0:
-            area=[(2*i*3.5*Widths)+(2*i*3.5*Lengths)+(Site_Width*SiteLength) for i in zz]
-            vol=[area*sto*3.5 for area,sto in zip(area,zz)]
-        else:
-            area=[(2*i*3.5*Widths)+(2*i*3.5*Lengths)+(Site_Width*SiteLength)*75 for i in zz]
-            vol=[area*sto*3.5*0.75 for area,sto in zip(area,zz)]
+    if BuildingShape==0:
+        area=[(2*i*3.5*Widths)+(2*i*3.5*Lengths)+(Site_Width*SiteLength) for i in zz]
+        vol=[area*sto*3.5 for area,sto in zip(area,zz)]
+    else:
+        area=[(2*i*3.5*Widths)+(2*i*3.5*Lengths)+(Site_Width*SiteLength)*75 for i in zz]
+        vol=[area*sto*3.5*0.75 for area,sto in zip(area,zz)]
 
         
-        each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
-        each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
+    each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
+    each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
         
-        each["Cooling (kWh/m2)"] = each["Cooling (kWh/m2)"] * 0.6
-        each["Heating (kWh/m2)"] = each["Heating (kWh/m2)"] * 0.8
-        each["Lighting (kWh/m2)"] = each["Lighting (kWh/m2)"] * 0.7
-        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 10.0
+    each["Cooling (kWh/m2)"] = each["Cooling (kWh/m2)"] * 0.6
+    each["Heating (kWh/m2)"] = each["Heating (kWh/m2)"] * 0.8
+    each["Lighting (kWh/m2)"] = each["Lighting (kWh/m2)"] * 0.7
+    each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 10.0
         
-        each['Co2']=each['Cooling (kWh/m2)']*1.7 + each['Heating (kWh/m2)']*1 +each['Lighting (kWh/m2)']*1.7
-        each['EUI']=each['Cooling (kWh/m2)']*1.7 + each['Heating (kWh/m2)']*1 +each['Lighting (kWh/m2)']*1.7
+    each['Co2']=each['Cooling (kWh/m2)']*1.7 + each['Heating (kWh/m2)']*1 +each['Lighting (kWh/m2)']*1.7
+    each['EUI']=each['Cooling (kWh/m2)']*1.7 + each['Heating (kWh/m2)']*1 +each['Lighting (kWh/m2)']*1.7
         
-        each.round({'Co2':2})
-        each_parks=pd.DataFrame({'name':['park '+str(i) for i in list(range(1,len(l_s_park)+1))],"location":park_coor,"SVF %":l_s_park,"Visibility %":l_v_park})
+    each.round({'Co2':2})
+    each_parks=pd.DataFrame({'name':['park '+str(i) for i in list(range(1,len(l_s_park)+1))],"location":park_coor,"SVF %":l_s_park,"Visibility %":l_v_park})
         
-        each=pd.concat([each,each_parks])
-        each=pd.concat([each,data_general])
+    each=pd.concat([each,each_parks])
+    each=pd.concat([each,data_general])
         
-        download=pd.concat([download,each])
+    download=pd.concat([download,each])
     
         
-    for solution, score in top_solutions:
-        score = calculate_weighted_score(solution.objectives, selected_metrics, weights)
-        st.header(f"Alternative {int(opt)}")
-        st.markdown(f"<p style='font-size:16px;'>🎯 Final Score (Weighted Sum): <strong>{round(score, 2)}</strong></p>", unsafe_allow_html=True)
-        opt+=1
-        var=solution.variables
-        OB=[]
-        OB_name=[]
+for solution, score in top_solutions:
+    score = calculate_weighted_score(solution.objectives, selected_metrics, weights)
+    st.header(f"Alternative {int(opt)}")
+    st.markdown(f"<p style='font-size:16px;'>🎯 Final Score (Weighted Sum): <strong>{round(score, 2)}</strong></p>", unsafe_allow_html=True)
+    opt+=1
+    var=solution.variables
+    OB=[]
+    OB_name=[]
                 
-        Lengths = ((SiteLength-((v+1)*var[1][0]))/v)/2
-        Widths = ((100-(u+1)*var[1][0])/u)*var[2][0]
-        data1=pd.DataFrame([[round(Widths,ndigits=1),round(Lengths,ndigits=1),var[0][0],var[1][0],var[2][0],var[12][0],var[15][0]]],columns=['Width (m)','Length (m)','Rotation (Degree)', 'Street width (m)', 'Building footprint','Residental Ratio','Commercial Ratio'])
+    Lengths = ((SiteLength-((v+1)*var[1][0]))/v)/2
+    Widths = ((100-(u+1)*var[1][0])/u)*var[2][0]
+    data1=pd.DataFrame([[round(Widths,ndigits=1),round(Lengths,ndigits=1),var[0][0],var[1][0],var[2][0],var[12][0],var[15][0]]],columns=['Width (m)','Length (m)','Rotation (Degree)', 'Street width (m)', 'Building footprint','Residental Ratio','Commercial Ratio'])
 
-        Bldg_Footprint=var[2][0]
-        if 180<Densityeachbldg<=240:
-            if Bldg_Footprint==0.45:
-                stories=var[4]
-            else:
-                stories=var[4]
+    Bldg_Footprint=var[2][0]
+    if 180<Densityeachbldg<=240:
+        if Bldg_Footprint==0.45:
+            stories=var[4]
+        else:
+            stories=var[4]
 
-        elif 240<Densityeachbldg<=300:
-            if Bldg_Footprint==0.45:
-                stories=var[5]
-            else:
-                stories=var[4]           
-        elif 300<Densityeachbldg<=360:
-            if Bldg_Footprint==0.45:
-                stories=var[7]
-            else:
-                stories=var[5]
+    elif 240<Densityeachbldg<=300:
+        if Bldg_Footprint==0.45:
+            stories=var[5]
+        else:
+            stories=var[4]           
+    elif 300<Densityeachbldg<=360:
+        if Bldg_Footprint==0.45:
+            stories=var[7]
+        else:
+            stories=var[5]
 
-        elif 360<Densityeachbldg<=420:
-            if Bldg_Footprint==0.45:
-                stories=var[8]
-            else:
-                stories=var[6]
-        elif 420<Densityeachbldg<=480:
-            if Bldg_Footprint==0.45:
-                stories=var[9]
-            else:
-                stories=var[7]
-
-        elif 480<Densityeachbldg<=540:
+    elif 360<Densityeachbldg<=420:
+        if Bldg_Footprint==0.45:
             stories=var[8]
-
-        elif 540<Densityeachbldg<=700:
+        else:
+            stories=var[6]
+    elif 420<Densityeachbldg<=480:
+        if Bldg_Footprint==0.45:
             stories=var[9]
-        #data2=pd.DataFrame([stories],columns=['h'+str(i) for i in range(len(stories))])
-        data3=pd.DataFrame([var[10]],columns=['parcel_building'+str(i) for i in range(0,len(var[10]))])
-
-        res_ratio=var[12][0]
-        com_ratio=var[15][0]
-
-        if res_ratio==0.5:
-            res_com_loc=var[13]
-            com_floor=var[11]
         else:
-            res_com_loc=var[14]
-            com_floor=var[16]
+            stories=var[7]
 
-        data4=pd.DataFrame([res_com_loc],columns=['com or res?'+str(i) for i in range(0,len(res_com_loc))])
-        data5=pd.DataFrame([com_floor],columns=['com floor'+str(i) for i in range(0,len(com_floor))])
-        my_list1=["Cooling","Heating","Lighting","Radiation-Hottest week","Solar Hours","Radiation-Coldest week","SVF","Visibility","PV Power","CO2 Emission"]
+    elif 480<Densityeachbldg<=540:
+        stories=var[8]
+
+    elif 540<Densityeachbldg<=700:
+        stories=var[9]
+    #data2=pd.DataFrame([stories],columns=['h'+str(i) for i in range(len(stories))])
+    data3=pd.DataFrame([var[10]],columns=['parcel_building'+str(i) for i in range(0,len(var[10]))])
+
+    res_ratio=var[12][0]
+    com_ratio=var[15][0]
+
+    if res_ratio==0.5:
+        res_com_loc=var[13]
+        com_floor=var[11]
+    else:
+        res_com_loc=var[14]
+        com_floor=var[16]
+
+    data4=pd.DataFrame([res_com_loc],columns=['com or res?'+str(i) for i in range(0,len(res_com_loc))])
+    data5=pd.DataFrame([com_floor],columns=['com floor'+str(i) for i in range(0,len(com_floor))])
+    my_list1=["Cooling","Heating","Lighting","Radiation-Hottest week","Solar Hours","Radiation-Coldest week","SVF","Visibility","PV Power","CO2 Emission"]
         
-        tr=0
-        for i in true_indexes:
-            OB.append(solution.objectives[tr])
-            OB_name.append(my_list1[i])
-            tr+=1
+    tr=0
+    for i in true_indexes:
+        OB.append(solution.objectives[tr])
+        OB_name.append(my_list1[i])
+        tr+=1
 
-        data6=pd.DataFrame([OB],columns=OB_name)
-        result = pd.concat([data1,data3, data4, data5,data6], axis=1)
+    data6=pd.DataFrame([OB],columns=OB_name)
+    result = pd.concat([data1,data3, data4, data5,data6], axis=1)
         
-        data=pd.concat([data,result])  
+    data=pd.concat([data,result])  
 
-        st.dataframe(data1)
-        building_loc=var[10]
-        if var[12][0]==0.5:
-            res_com_loc=var[13]
-            com_floor=var[11]
-        else:
-            res_com_loc=var[14]
-            com_floor=var[16]
+    st.dataframe(data1)
+    building_loc=var[10]
+    if var[12][0]==0.5:
+        res_com_loc=var[13]
+        com_floor=var[11]
+    else:
+        res_com_loc=var[14]
+        com_floor=var[16]
             
-        res_com=res_com_loc
-        commercial=[]
-        cm=0
-        for i in res_com:
-            if i==0:
-                commercial.append(0)
-            else:
-                commercial.append(com_floor[cm])
-                cm+=1
-        building_coor=[]
-        for i in building_loc:
-            building_coor.append(parcels_loc[i])
+    res_com=res_com_loc
+    commercial=[]
+    cm=0
+    for i in res_com:
+        if i==0:
+            commercial.append(0)
+        else:
+            commercial.append(com_floor[cm])
+            cm+=1
+    building_coor=[]
+    for i in building_loc:
+        building_coor.append(parcels_loc[i])
         
-        s = set(building_loc)
-        park_loc = [x for x in list(range(n_parcel)) if x not in s]
-        park_coor=[]
-        for i in park_loc:
-            park_coor.append(parcels_loc[i])
+    s = set(building_loc)
+    park_loc = [x for x in list(range(n_parcel)) if x not in s]
+    park_coor=[]
+    for i in park_loc:
+        park_coor.append(parcels_loc[i])
 
-        x1=[]
-        y1=[]
+    x1=[]
+    y1=[]
         
-        for i in building_coor:
-            x1.append(i[0])
-            y1.append(i[1])
-        x2=[]
-        y2=[]
-        for i in park_coor:
-            x2.append(i[0])
-            y2.append(i[1])
-        xx=[]
-        for i in x1:
-            xx.append(i-(0)-Lengths/2)
-            xx.append(i+(0)+Lengths/2)
-        yy = []
-        for i in y1:
-            yy.append(i)
-            yy.append(i)
-        zz = [k*3.5 for k in stories]
+    for i in building_coor:
+        x1.append(i[0])
+        y1.append(i[1])
+    x2=[]
+    y2=[]
+    for i in park_coor:
+        x2.append(i[0])
+        y2.append(i[1])
+    xx=[]
+    for i in x1:
+        xx.append(i-(0)-Lengths/2)
+        xx.append(i+(0)+Lengths/2)
+    yy = []
+    for i in y1:
+        yy.append(i)
+        yy.append(i)
+    zz = [k*3.5 for k in stories]
         
-        xx1=[]
-        for i in x2:
-            xx1.append(i)
-            xx1.append(i+9)
-        yy1=[]
-        for i in y2:
-            yy1.append(i)
-            yy1.append(i)
-        zz1=len(y2)*[0.2]+len(y2)*[0.2]
+    xx1=[]
+    for i in x2:
+        xx1.append(i)
+        xx1.append(i+9)
+    yy1=[]
+    for i in y2:
+        yy1.append(i)
+        yy1.append(i)
+    zz1=len(y2)*[0.2]+len(y2)*[0.2]
         
-        xx2 =[]
-        for i in x1:
-            xx2.append(i-(0)-Lengths/2)
-            xx2.append(i+(0)+Lengths/2)
+    xx2 =[]
+    for i in x1:
+        xx2.append(i-(0)-Lengths/2)
+        xx2.append(i+(0)+Lengths/2)
            
-        yy2 = yy
-        zz2 = commercial
+    yy2 = yy
+    zz2 = commercial
                        
-        Area=Area_building(BuildingShape,Lengths,Widths)
-        adjacency=adjacency_estimation(zz)
-        height=neigbors_h(zz,park_loc,u,v) #### 
-        building_loc_copy=building_loc.copy()*2
-        Rotation=var[0][0]
-        sum_res=[]
-        sum_com=[]
-        for s,rc in zip(zz,res_com_loc):
-            if rc==0:
-                sum_res.append(s/3.5)
-            else:
-                sum_com.append(s/3.5)
-        #st.write(Area,sum_res,sum_com)
-        nafar_res1=round((sum(sum_res)*Area)/17.5) #####
-        nafar_office=round(((sum(sum_com)*var[15][0])*Area)/9.3)
-        nafar_comm=round(((sum(sum_com)*(1-var[15][0]))*Area)/6.2)
+    Area=Area_building(BuildingShape,Lengths,Widths)
+    adjacency=adjacency_estimation(zz)
+    height=neigbors_h(zz,park_loc,u,v) #### 
+    building_loc_copy=building_loc.copy()*2
+    Rotation=var[0][0]
+    sum_res=[]
+    sum_com=[]
+    for s,rc in zip(zz,res_com_loc):
+        if rc==0:
+            sum_res.append(s/3.5)
+        else:
+            sum_com.append(s/3.5)
+    #st.write(Area,sum_res,sum_com)
+    nafar_res1=round((sum(sum_res)*Area)/17.5) #####
+    nafar_office=round(((sum(sum_com)*var[15][0])*Area)/9.3)
+    nafar_comm=round(((sum(sum_com)*(1-var[15][0]))*Area)/6.2)
 
-        pc_res=(sum(sum_res)*Area)/nafar_res1
-        pc_comm=round(((sum(sum_com)*(1-var[15][0]))*Area))/nafar_comm
-        pc_office=round(((sum(sum_com)*var[15][0])*Area))/nafar_office
+    pc_res=(sum(sum_res)*Area)/nafar_res1
+    pc_comm=round(((sum(sum_com)*(1-var[15][0]))*Area))/nafar_comm
+    pc_office=round(((sum(sum_com)*var[15][0])*Area))/nafar_office
 
-        #parka kam beshe
-        pc_out=((Site_Width*SiteLength)-(Widths*Lengths*u*v))/(nafar_res1+nafar_comm+nafar_office)
+    #parka kam beshe
+    pc_out=((Site_Width*SiteLength)-(Widths*Lengths*u*v))/(nafar_res1+nafar_comm+nafar_office)
         
-        Machine_res=round(nafar_res1/4)
-        Machine_office=round(nafar_office/2)
-        Machine_comm=round(nafar_comm/2)   
+    Machine_res=round(nafar_res1/4)
+    Machine_office=round(nafar_office/2)
+    Machine_comm=round(nafar_comm/2)   
 
         
-        lowest_length=round(var[1][0], 2)
-        longest_length=round((Lengths * u * 2) + (Widths * v) + (var[1][0] * ((u *2) - 1)), 2) #round(max((u*Widths)+Lengths,(v*Lengths)+Widths),2)
+    lowest_length=round(var[1][0], 2)
+    longest_length=round((Lengths * u * 2) + (Widths * v) + (var[1][0] * ((u *2) - 1)), 2) #round(max((u*Widths)+Lengths,(v*Lengths)+Widths),2)
 
-        num_gas_car=int((Machine_res+Machine_office+Machine_comm)*gas_car_rate) #####
-        num_cng_car=int((Machine_res+Machine_office+Machine_comm)*(1-gas_car_rate))###
+    num_gas_car=int((Machine_res+Machine_office+Machine_comm)*gas_car_rate) #####
+    num_cng_car=int((Machine_res+Machine_office+Machine_comm)*(1-gas_car_rate))###
 
 
-        total_co2_gas=round(0.07956*num_gas_car*2.31*longest_length,2) #####
-        total_co2_CNG=round(0.06453*num_gas_car* 2.75*longest_length,2) #####
-        total_co2=round(total_co2_gas+total_co2_CNG,2) #####
+    total_co2_gas=round(0.07956*num_gas_car*2.31*longest_length,2) #####
+    total_co2_CNG=round(0.06453*num_gas_car* 2.75*longest_length,2) #####
+    total_co2=round(total_co2_gas+total_co2_CNG,2) #####
 
-        st.markdown(f"""
-            - Residential space per capita :{round(pc_res,1)}
-            - Commercial space per capit :{round(pc_comm,1)}
-            - Office space per capita :{round(pc_office,1)}
-            - Open space per capita :{round(pc_out,1)}   
-            """
-            )
-        st.write(f"In this generated option, the number of residential occupants is {nafar_res1} with {Machine_res} cars,the number of office occupants is {nafar_office} with {Machine_office} cars, and number of commercial occupants is {nafar_comm} with {Machine_comm} cars. In this option the longest way is {longest_length} meter and shortest length is {lowest_length} meter. ")
-        #st.write(f"The number of gasoline car is {num_gas_car} with {total_co2_gas} CO2 production")
-        #if ad :
-            #st.write(f"The number of CNG cars is {num_cng_car} with {total_co2_CNG} CO2 production.")
-        #st.write(f"The total amount of CO2 production is {total_co2}")
+    st.markdown(f"""
+        - Residential space per capita :{round(pc_res,1)}
+        - Commercial space per capit :{round(pc_comm,1)}
+        - Office space per capita :{round(pc_office,1)}
+        - Open space per capita :{round(pc_out,1)}   
+        """
+        )
+    st.write(f"In this generated option, the number of residential occupants is {nafar_res1} with {Machine_res} cars,the number of office occupants is {nafar_office} with {Machine_office} cars, and number of commercial occupants is {nafar_comm} with {Machine_comm} cars. In this option the longest way is {longest_length} meter and shortest length is {lowest_length} meter. ")
+    #st.write(f"The number of gasoline car is {num_gas_car} with {total_co2_gas} CO2 production")
+    #if ad :
+        #st.write(f"The number of CNG cars is {num_cng_car} with {total_co2_CNG} CO2 production.")
+    #st.write(f"The total amount of CO2 production is {total_co2}")
         
-        r_pv_building,e_c_building,e_h_building,e_l_building,en_h_building,hours_building,en_co_building,l_s_building,l_v_building=predictive_model(BuildingShape,green_ratio,SiteLength,var[0][0],var[1][0],var[2][0],Densityeachbldg,var[3][0],Lengths,Widths,u,v,zz,Area,adjacency,height,dimention,var[12][0],var[15][0],com_floor,res_com_loc,building_loc_copy)
-        r_pv_park,e_c_park,e_h_park,e_l_park,en_h_park,hours_park,en_co_park,l_s_park,l_v_park=predictive_model_park(BuildingShape,green_ratio,SiteLength,var[0][0],var[1][0],var[2][0],Lengths,Widths,u,v,Area,height,dimention,park_loc)
+    r_pv_building,e_c_building,e_h_building,e_l_building,en_h_building,hours_building,en_co_building,l_s_building,l_v_building=predictive_model(BuildingShape,green_ratio,SiteLength,var[0][0],var[1][0],var[2][0],Densityeachbldg,var[3][0],Lengths,Widths,u,v,zz,Area,adjacency,height,dimention,var[12][0],var[15][0],com_floor,res_com_loc,building_loc_copy)
+    r_pv_park,e_c_park,e_h_park,e_l_park,en_h_park,hours_park,en_co_park,l_s_park,l_v_park=predictive_model_park(BuildingShape,green_ratio,SiteLength,var[0][0],var[1][0],var[2][0],Lengths,Widths,u,v,Area,height,dimention,park_loc)
         
              
 
-        fig = go.Figure(layout={'scene': {'aspectmode':"data"}})
-        fig.add_trace(go.Scatter3d(x=[Site_Width],y=[SiteLength],mode='markers',marker=dict(size=10,symbol='circle')))
-        fig.update_layout(scene = dict(xaxis = dict(visible=True,dtick=20),yaxis = dict(visible=True,dtick=20),zaxis =dict(visible=True,backgroundcolor="whitesmoke")),annotations=[])
-        x_center=[]
-        y_center=[]
-        for i in park_coor:
-            x_center.append(i[0])
-            y_center.append(i[1])
+    fig = go.Figure(layout={'scene': {'aspectmode':"data"}})
+    fig.add_trace(go.Scatter3d(x=[Site_Width],y=[SiteLength],mode='markers',marker=dict(size=10,symbol='circle')))
+    fig.update_layout(scene = dict(xaxis = dict(visible=True,dtick=20),yaxis = dict(visible=True,dtick=20),zaxis =dict(visible=True,backgroundcolor="whitesmoke")),annotations=[])
+    x_center=[]
+    y_center=[]
+    for i in park_coor:
+        x_center.append(i[0])
+        y_center.append(i[1])
             
-        for i,j in zip(x_center,y_center):
-            fig.add_trace(park(12,0.1, i,j))
+    for i,j in zip(x_center,y_center):
+        fig.add_trace(park(12,0.1, i,j))
             
-        for i,j,name in zip(x_center,y_center,range(1,len(y_center)+1)):
-            name='P'+str(name)
-            fig.add_trace(centerpark(0,0, i,j,name))#
+    for i,j,name in zip(x_center,y_center,range(1,len(y_center)+1)):
+        name='P'+str(name)
+        fig.add_trace(centerpark(0,0, i,j,name))#
 
 
-        for x, y, z,l in zip(xx, yy, zz,res_com):
-            fig.add_trace(towers([Lengths,Widths], z, x, y,l))
-        for x, y, z,l in zip(xx2,yy2,zz2,commercial):
-            fig.add_trace(comm([Lengths,Widths], z, x, y,l))
+    for x, y, z,l in zip(xx, yy, zz,res_com):
+        fig.add_trace(towers([Lengths,Widths], z, x, y,l))
+    for x, y, z,l in zip(xx2,yy2,zz2,commercial):
+        fig.add_trace(comm([Lengths,Widths], z, x, y,l))
             
-        count_res=0
-        count_comm=0
-        building_name=[]
-        for i,j,z,name in zip(xx,yy,zz,res_com):        
-            if name==0:
-                legend='R'+str(count_res)
-                building_name.append(legend)
-                fig.add_trace(centerpark(0,z, i,j,legend))#
-                count_res=count_res+1
-            else:       
-                legend='O'+str(count_comm)
-                building_name.append(legend)
-                fig.add_trace(centerpark(0,z, i,j,legend))#
-                count_comm=count_comm+1
+    count_res=0
+    count_comm=0
+    building_name=[]
+    for i,j,z,name in zip(xx,yy,zz,res_com):        
+        if name==0:
+            legend='R'+str(count_res)
+            building_name.append(legend)
+            fig.add_trace(centerpark(0,z, i,j,legend))#
+            count_res=count_res+1
+        else:       
+            legend='O'+str(count_comm)
+            building_name.append(legend)
+            fig.add_trace(centerpark(0,z, i,j,legend))#
+            count_comm=count_comm+1
                          
  
-        st.markdown("3D view")
-        st.plotly_chart(fig)
-        #st.write([len(i)for i in [zz,height,dimention,res_com_loc,building_loc_copy]])
-        #st.write(res_com_loc,res_ratio)
+    st.markdown("3D view")
+    st.plotly_chart(fig)
+    #st.write([len(i)for i in [zz,height,dimention,res_com_loc,building_loc_copy]])
+    #st.write(res_com_loc,res_ratio)
 
-        if BuildingShape==0:
-            area=[(2*i*3.5*Widths)+(2*i*3.5*Lengths)+(Site_Width*SiteLength) for i in zz]
-            vol=[area*sto*3.5 for area,sto in zip(area,zz)]
-        else:
-            area=[(2*i*3.5*Widths)+(2*i*3.5*Lengths)+(Site_Width*SiteLength)*75 for i in zz]
-            vol=[area*sto*3.5*0.75 for area,sto in zip(area,zz)]
+    if BuildingShape==0:
+        area=[(2*i*3.5*Widths)+(2*i*3.5*Lengths)+(Site_Width*SiteLength) for i in zz]
+        vol=[area*sto*3.5 for area,sto in zip(area,zz)]
+    else:
+        area=[(2*i*3.5*Widths)+(2*i*3.5*Lengths)+(Site_Width*SiteLength)*75 for i in zz]
+        vol=[area*sto*3.5*0.75 for area,sto in zip(area,zz)]
 
-        #with svf,Location
-        #each=pd.DataFrame({"building name":building_name,"location x":xx,"location y":yy,"Height":zz,"Aspect_ratio":[i/3.5 for i in zz],"surface_vol_ratio":[i/j for i,j in zip(area,vol)],'commerical_h':commercial,'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
+    #with svf,Location
+    #each=pd.DataFrame({"building name":building_name,"location x":xx,"location y":yy,"Height":zz,"Aspect_ratio":[i/3.5 for i in zz],"surface_vol_ratio":[i/j for i,j in zip(area,vol)],'commerical_h':commercial,'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
 
-        #without svf,location
+    #without svf,location
         
-        flights=(sum(e_h_building)*0.21233 +sum(e_c_building)*0.18316 +sum(e_l_building)*0.21233)*Area+ total_co2
-        f=(np.array([x + y for x, y in zip(e_c_building,e_l_building)]).dot(area))*0.18316+np.array(e_h_building).dot(area)*0.21233+ total_co2
+    flights=(sum(e_h_building)*0.21233 +sum(e_c_building)*0.18316 +sum(e_l_building)*0.21233)*Area+ total_co2
+    f=(np.array([x + y for x, y in zip(e_c_building,e_l_building)]).dot(area))*0.18316+np.array(e_h_building).dot(area)*0.21233+ total_co2
         
-        st.write(f"The total amount of CO2 production(Transportation and building emissions) is {round(f,2)} kg . This amount of carbon emissions is equivalent to {int(f/226)} one-way economy class flights for a single traveler between Tehran (IR) and Mashhad(IR) covering a distance of 800 km.")
+    st.write(f"The total amount of CO2 production(Transportation and building emissions) is {round(f,2)} kg . This amount of carbon emissions is equivalent to {int(f/226)} one-way economy class flights for a single traveler between Tehran (IR) and Mashhad(IR) covering a distance of 800 km.")
    
-        each=pd.DataFrame({"Building name":building_name,"Height":zz,"Number of Floors":[i/3.5 for i in zz],"Aspect ratio":[i/var[1][0]for i in zz],'commerical_h':commercial,
-                           'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,
-                           "Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building })
+    each=pd.DataFrame({"Building name":building_name,"Height":zz,"Number of Floors":[i/3.5 for i in zz],"Aspect ratio":[i/var[1][0]for i in zz],'commerical_h':commercial,
+                       'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,
+                       "Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building })
         
-        each['Co2']=((each['Cooling (kWh/m2)']*Area + each['Lighting (kWh/m2)']*Area)*0.21233+(each['Heating (kWh/m2)']*Area*0.18316))*stories
-        #each['EUI(kWh/m2)']=((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1+(each['Heating (kWh/m2)']*3))*0.9
-        each['EUI(kWh/m2)'] = ((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1.7 + (each['Heating (kWh/m2)']*1))
+    each['Co2']=((each['Cooling (kWh/m2)']*Area + each['Lighting (kWh/m2)']*Area)*0.21233+(each['Heating (kWh/m2)']*Area*0.18316))*stories
+    #each['EUI(kWh/m2)']=((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1+(each['Heating (kWh/m2)']*3))*0.9
+    each['EUI(kWh/m2)'] = ((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1.7 + (each['Heating (kWh/m2)']*1))
 
 
         
-        # Convert columns to numeric, ignoring errors for non-convertible columns
-        each[['PV generation (kWh/m2)', 'Cooling (kWh/m2)', 'Heating (kWh/m2)', 
-              'Lighting (kWh/m2)', 'Roof hot (kWh/m2)', 'Solar Hours (Hours)', 
-              'Roof Cold (kWh/m2)', 'Co2','EUI(kWh/m2)']] = each[['PV generation (kWh/m2)', 
-              'Cooling (kWh/m2)', 'Heating (kWh/m2)', 'Lighting (kWh/m2)', 
-              'Roof hot (kWh/m2)', 'Solar Hours (Hours)', 'Roof Cold (kWh/m2)', 
-              'Co2','EUI(kWh/m2)']].apply(pd.to_numeric, errors='coerce')
+    # Convert columns to numeric, ignoring errors for non-convertible columns
+    each[['PV generation (kWh/m2)', 'Cooling (kWh/m2)', 'Heating (kWh/m2)', 
+          'Lighting (kWh/m2)', 'Roof hot (kWh/m2)', 'Solar Hours (Hours)', 
+          'Roof Cold (kWh/m2)', 'Co2','EUI(kWh/m2)']] = each[['PV generation (kWh/m2)', 
+          'Cooling (kWh/m2)', 'Heating (kWh/m2)', 'Lighting (kWh/m2)', 
+          'Roof hot (kWh/m2)', 'Solar Hours (Hours)', 'Roof Cold (kWh/m2)', 
+          'Co2','EUI(kWh/m2)']].apply(pd.to_numeric, errors='coerce')
         
-        # Round numeric columns to 2 decimal places
-        each = each.round({'PV generation (kWh/m2)': 2, "Cooling (kWh/m2)": 2, 
-                           "Heating (kWh/m2)": 2, "Lighting (kWh/m2)": 2, 
-                           "Roof hot (kWh/m2)": 2, "Solar Hours (Hours)": 2, 
-                           "Roof Cold (kWh/m2)": 2, 'Co2': 2,'EUI(kWh/m2)':2})
+    # Round numeric columns to 2 decimal places
+    each = each.round({'PV generation (kWh/m2)': 2, "Cooling (kWh/m2)": 2, 
+                       "Heating (kWh/m2)": 2, "Lighting (kWh/m2)": 2, 
+                       "Roof hot (kWh/m2)": 2, "Solar Hours (Hours)": 2, 
+                       "Roof Cold (kWh/m2)": 2, 'Co2': 2,'EUI(kWh/m2)':2})
 
-        st.markdown("Outputs for each building")
-        st.dataframe(each)
-        #st.markdown("Outputs for generated neighbour")
-        #st.dataframe(result)
+    st.markdown("Outputs for each building")
+    st.dataframe(each)
+    #st.markdown("Outputs for generated neighbour")
+    #st.dataframe(result)
 
-        st.markdown("Outputs for Generated Parks")
-        each_parks=pd.DataFrame({'name':['park '+str(i) for i in list(range(1,len(l_s_park)+1))],"location":park_coor,"SVF %":l_s_park,"Visibility %":l_v_park})
-        each_parks[["SVF %","Visibility %"]].apply(pd.to_numeric, errors='coerce')
+    st.markdown("Outputs for Generated Parks")
+    each_parks=pd.DataFrame({'name':['park '+str(i) for i in list(range(1,len(l_s_park)+1))],"location":park_coor,"SVF %":l_s_park,"Visibility %":l_v_park})
+    each_parks[["SVF %","Visibility %"]].apply(pd.to_numeric, errors='coerce')
         
-        # Round numeric columns to 2 decimal places
-        each_parks = each_parks.round({"SVF %": 2,"Visibility %": 2})
-        st.dataframe(each_parks)
+    # Round numeric columns to 2 decimal places
+    each_parks = each_parks.round({"SVF %": 2,"Visibility %": 2})
+    st.dataframe(each_parks)
         
-        if Shade:
-            shading1=shading(BuildingShape,var[0][0],building_coor,Lengths,Widths,SiteLength,Site_Width,zz)
-            po=pd.DataFrame({"x":shading1[1],"y":shading1[2],"shading":shading1[0]})
-            po['z']=1  
-            fig, ax = plt.subplots()
-            sc = ax.scatter(po['x'], po['y'], c=po['shading'], s=1, vmin=0.0, vmax=1.0)
-            cbar = fig.colorbar(sc, ax=ax, label='Shading')
+    if Shade:
+        shading1=shading(BuildingShape,var[0][0],building_coor,Lengths,Widths,SiteLength,Site_Width,zz)
+        po=pd.DataFrame({"x":shading1[1],"y":shading1[2],"shading":shading1[0]})
+        po['z']=1  
+        fig, ax = plt.subplots()
+        sc = ax.scatter(po['x'], po['y'], c=po['shading'], s=1, vmin=0.0, vmax=1.0)
+        cbar = fig.colorbar(sc, ax=ax, label='Shading')
 
 
-            isshaded=[]
-            for i in shading1[0]:
-                if i<0.90:
-                    isshaded.append(1)
-                else:
-                    isshaded.append(0)
+        isshaded=[]
+        for i in shading1[0]:
+            if i<0.90:
+                isshaded.append(1)
+            else:
+                isshaded.append(0)
                     
-            n_shade=round((sum(isshaded))/len(shading1[0]),1)   
-            st.markdown(f"Shaded Area {n_shade} %")
+        n_shade=round((sum(isshaded))/len(shading1[0]),1)   
+        st.markdown(f"Shaded Area {n_shade} %")
             
-            if round(n_shade*100,1) <= 20:
-                st.write("""
-                **Low Shading (0-20%)**
+        if round(n_shade*100,1) <= 20:
+            st.write("""
+            **Low Shading (0-20%)**
                 
-                **Winter:** 
-                Maximizes solar heat gain, reducing heating demand.
+            **Winter:** 
+            Maximizes solar heat gain, reducing heating demand.
 
                 
-                **Summer:** 
-                Minimal shading increases cooling demand.
+            **Summer:** 
+            Minimal shading increases cooling demand.
 
                 
-                **Additional Benefits:**
-                PV production is at its highest, and natural daylight is fully utilized.
+            **Additional Benefits:**
+            PV production is at its highest, and natural daylight is fully utilized.
 
                 
-                **Thermal Comfort & Frost Risk:** 
-                Outdoor spaces may become uncomfortably hot in summer, but the risk of frost or snow accumulation in winter is negligible.""")
+            **Thermal Comfort & Frost Risk:** 
+            Outdoor spaces may become uncomfortably hot in summer, but the risk of frost or snow accumulation in winter is negligible.""")
                 
-            elif 20 < round(n_shade*100,1) <= 40:
-                st.write("""
-                **Moderate Shading (20-40%)**
+        elif 20 < round(n_shade*100,1) <= 40:
+            st.write("""
+            **Moderate Shading (20-40%)**
                 
-                **Winter:** 
-                Slightly reduces solar heat gain, leading to a minor increase in heating energy consumption.   
+            **Winter:** 
+            Slightly reduces solar heat gain, leading to a minor increase in heating energy consumption.   
                 
                 
-                **Summer:** 
-                Provides moderate shading, improving cooling efficiency.
+            **Summer:** 
+            Provides moderate shading, improving cooling efficiency.
                
                 
-                **Additional Effects:** 
-                PV production and daylight availability are moderately reduced. 
+            **Additional Effects:** 
+            PV production and daylight availability are moderately reduced. 
                 
                 
-                **Thermal Comfort & Frost Risk:** 
-                Offers improved thermal comfort in summer while maintaining a low risk of frost or snow accumulation in winter.
-                """)
-            elif 40 < round(n_shade*100,1) <= 60:
-                st.write("""
-                **High Shading (40-60%)**
+            **Thermal Comfort & Frost Risk:** 
+            Offers improved thermal comfort in summer while maintaining a low risk of frost or snow accumulation in winter.
+            """)
+        elif 40 < round(n_shade*100,1) <= 60:
+            st.write("""
+            **High Shading (40-60%)**
                 
-                **Winter:** 
-                Reduces solar heat gain significantly, resulting in higher heating demand.
-                
-                
-                **Summer:** 
-                Provides ample shading, significantly reducing cooling energy requirements.
+            **Winter:** 
+            Reduces solar heat gain significantly, resulting in higher heating demand.
                 
                 
-                **Additional Effects:** 
-                PV production and natural daylight are noticeably reduced.
+            **Summer:** 
+            Provides ample shading, significantly reducing cooling energy requirements.
                 
                 
-                **Thermal Comfort & Frost Risk:** 
-                Enhances thermal comfort in outdoor spaces during summer but increases the likelihood of frost or snow accumulation in shaded areas during winter.""")
-            elif 60 < round(n_shade*100,1) <= 80:
-                st.write("""
-                **Very High Shading (60-80%)**
-                
-                **Winter:** 
-                Significantly increases heating demand and sharply reduces PV production.
+            **Additional Effects:** 
+            PV production and natural daylight are noticeably reduced.
                 
                 
-                **Summer:** 
-                Creates excellent cooling conditions in outdoor spaces.
+            **Thermal Comfort & Frost Risk:** 
+            Enhances thermal comfort in outdoor spaces during summer but increases the likelihood of frost or snow accumulation in shaded areas during winter.""")
+        elif 60 < round(n_shade*100,1) <= 80:
+            st.write("""
+            **Very High Shading (60-80%)**
+                
+            **Winter:** 
+            Significantly increases heating demand and sharply reduces PV production.
                 
                 
-                **Additional Effects:** 
-                Natural lighting is heavily diminished, increasing reliance on artificial lighting.
+            **Summer:** 
+            Creates excellent cooling conditions in outdoor spaces.
                 
                 
-                **Thermal Comfort & Frost Risk:** 
-                Provides optimal summer thermal comfort for outdoor spaces but heightens the risk of frost and snow buildup in winter, which may pose safety concerns. """)
-            elif 80 < round(n_shade*100,1) <= 100:
-                st.write("""
-                **Maximum Shading (80-100%)**
-                
-                **Winter:** 
-                Results in the highest heating demand while almost eliminating PV production.    
+            **Additional Effects:** 
+            Natural lighting is heavily diminished, increasing reliance on artificial lighting.
                 
                 
-                **Summer:** 
-                Maximizes cooling efficiency, ensuring the most comfortable outdoor conditions.
+            **Thermal Comfort & Frost Risk:** 
+            Provides optimal summer thermal comfort for outdoor spaces but heightens the risk of frost and snow buildup in winter, which may pose safety concerns. """)
+        elif 80 < round(n_shade*100,1) <= 100:
+            st.write("""
+            **Maximum Shading (80-100%)**
+                
+            **Winter:** 
+            Results in the highest heating demand while almost eliminating PV production.    
                 
                 
-                **Additional Effects:** 
-                Artificial lighting becomes essential due to minimal natural daylight, and the sky view is nearly completely obstructed.
+            **Summer:** 
+            Maximizes cooling efficiency, ensuring the most comfortable outdoor conditions.
                 
                 
-                **Thermal Comfort & Frost Risk:** 
-                Delivers the best thermal comfort in summer but carries the greatest risk of frost and snow accumulation in winter, potentially creating safety hazards in these areas.
-                """)
+            **Additional Effects:** 
+            Artificial lighting becomes essential due to minimal natural daylight, and the sky view is nearly completely obstructed.
+                
+                
+            **Thermal Comfort & Frost Risk:** 
+            Delivers the best thermal comfort in summer but carries the greatest risk of frost and snow accumulation in winter, potentially creating safety hazards in these areas.
+            """)
         
-            st.pyplot(fig)
-            #st.set_option('deprecation.showPyplotGlobalUse', False)
-            #fig = go.Figure(data=[go.Scatter3d(x=po['x'],y=po['y'],z=po['z'],mode='markers',marker=dict(size=0.0,color=po['shading']))])
-            #fig.update_layout(margin=dict(l=0, r=0, b=0, t=0))
+        st.pyplot(fig)
+        #st.set_option('deprecation.showPyplotGlobalUse', False)
+        #fig = go.Figure(data=[go.Scatter3d(x=po['x'],y=po['y'],z=po['z'],mode='markers',marker=dict(size=0.0,color=po['shading']))])
+        #fig.update_layout(margin=dict(l=0, r=0, b=0, t=0))
         
                 
-        st.divider()
+    st.divider()
         
-    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-        download.to_excel(writer, sheet_name='Sheet1')    
-        # Close the Pandas Excel writer and output the Excel file to the buffer
-        writer.close()
-        st.download_button(label="Download optimization results ",data=buffer,file_name="pandas_multiple.xlsx",mime="application/vnd.ms-excel")
+with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+    download.to_excel(writer, sheet_name='Sheet1')    
+    # Close the Pandas Excel writer and output the Excel file to the buffer
+    writer.close()
+    st.download_button(label="Download optimization results ",data=buffer,file_name="pandas_multiple.xlsx",mime="application/vnd.ms-excel")
 
 else:
-    st.write("Tap Toggle to Optimize")
+st.write("Tap Toggle to Optimize")
     
     
     
