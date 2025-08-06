@@ -288,14 +288,6 @@ my_list1 = ["EUI","Cooling","Heating","Lighting","Radiation-Hottest week","Solar
 
 objective_directions = {
 
-def calculate_weighted_score(objectives, selected_metrics, weights):
-    score = 0
-    total_weight = sum(weights[metric] for metric in selected_metrics)
-    for metric, value in zip(selected_metrics, objectives):
-        w = weights[metric]
-        score += w * value
-    return score / total_weight
-
 "EUI": "min",
     "Cooling": "min",
     "Heating": "min",
@@ -308,6 +300,14 @@ def calculate_weighted_score(objectives, selected_metrics, weights):
     "PV": "max",
     "Co2": "min"
 }
+
+def calculate_weighted_score(objectives, selected_metrics, weights):
+    score = 0
+    total_weight = sum(weights[metric] for metric in selected_metrics)
+    for metric, value in zip(selected_metrics, objectives):
+        w = weights[metric]
+        score += w * value
+    return score / total_weight
 
 selected_metrics = [my_list1[i] for i in true_indexes]
 
