@@ -287,6 +287,14 @@ for i in range(len(my_list)):
 my_list1 = ["EUI","Cooling","Heating","Lighting","Radiation-Hottest week","Solar Hours","Radiation-Coldest week","SVF","Visibility","PV Power","CO2 Emission"]
 
 objective_directions = {
+
+def calculate_weighted_score(objectives, selected_metrics, weights):
+    score = 0
+    for metric, value in zip(selected_metrics, objectives):
+        w = weights[metric]
+        score += w * value
+    return score
+
     "EUI": "min",
     "Cooling": "min",
     "Heating": "min",
@@ -1122,7 +1130,9 @@ if on:
     
         
     for solution in algorithm.result[0:options]:
+        score = calculate_weighted_score(solution.objectives, selected_metrics, weights)
         st.header(f"Alternative {int(opt)}")
+        st.subheader(f"Final Score (Weighted Sum): {round(score, 2)}")
         opt+=1
         var=solution.variables
         OB=[]
@@ -1546,5 +1556,13 @@ if on:
 else:
     st.write("Tap Toggle to Optimize")
     
-   
+    
+    
+
+        
+        
+
+
+
+    
     
