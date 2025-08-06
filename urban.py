@@ -240,7 +240,7 @@ else:
 
     roof_hot=False
     #roof_hot_up=500
-    st.sidebar.header('Livability Metrics')
+    st.sidebar.header('Physical Metrics')
     SVF=st.sidebar.checkbox('Sky View Factor (%)')
     if SVF:
         SVF1= st.sidebar.select_slider("Sky View Factor",options=['Limited sky view','Moderate sky view','Extensive sky view'])
@@ -291,9 +291,9 @@ objective_directions = {
     "Cooling": "min",
     "Heating": "min",
     "Lighting": "min",
-    "Roof Hot": "min",
+    "Roof Hot": "max",
     "Hours": "max",
-    "Roof Cold": "min",
+    "Roof Cold": "max",
     "SVF": "max",
     "Visibility": "max",
     "PV": "max",
@@ -1107,7 +1107,7 @@ if on:
         each["Cooling (kWh/m2)"] = each["Cooling (kWh/m2)"] * 0.6
         each["Heating (kWh/m2)"] = each["Heating (kWh/m2)"] * 0.8
         each["Lighting (kWh/m2)"] = each["Lighting (kWh/m2)"] * 0.7
-        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 2
+        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 2.0
         
         each['Co2']=each['Cooling (kWh/m2)']*1.7 + each['Heating (kWh/m2)']*1 +each['Lighting (kWh/m2)']*1.7
         each['EUI']=each['Cooling (kWh/m2)']*1.7 + each['Heating (kWh/m2)']*1 +each['Lighting (kWh/m2)']*1.7
