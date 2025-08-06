@@ -1546,13 +1546,8 @@ if on:
 else:
     st.write("Tap Toggle to Optimize")
     
-    
-    
+   
+# Calculate maximum possible score
+max_possible_score = sum(weights.values())
+st.subheader(f"Maximum possible score (based on your weights): {max_possible_score}")
 
-        
-        
-
-
-
-    
-    
