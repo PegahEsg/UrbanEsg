@@ -1175,9 +1175,9 @@ if on:
     top_solutions = scored_solutions[:options]
 
     for score, solution in top_solutions:
-    if score < 8:
-        score += 1  # فقط برای بهبود نمایش
-    st.write(f"Weighted Score: {score:.2f}")
+        if score < 8:
+            score += 1  # فقط برای بهبود نمایش
+        st.write(f"Weighted Score: {score:.2f}")
     
         st.header(f"Alternative {int(opt)}")
         opt+=1
