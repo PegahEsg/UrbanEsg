@@ -669,72 +669,71 @@ def Area_building(BuildingShape,Lengths,Widths):
     else:
         Area=(Lengths*(Widths)*0.75) #######
     return Area
+
 def optimize(input):
     Rotation = input[0][0]
     Sub_street = input[1][0]
     Bldg_Footprint = input[2][0]
     WWR = input[3][0]
-    com_floor = input[11][0]
-    building_loc=input[10]
-   
+    building_loc = input[10]
+
     s = building_loc
     park_loc = [x for x in list(range(n_parcel)) if x not in s]
 
-    res_ratio=input[12][0]
-    com_ratio=input[15][0]
-    
-    if res_ratio==0.5:
-        res_com_loc=input[13]
-        com_floor=input[11]
-    else:
-        res_com_loc=input[14]
-        com_floor=input[16]
+    res_ratio = input[12][0]
+    com_ratio = input[15][0]
 
-    sum_res=[]
-    sum_com=[]
-    for rc in zip(res_com_loc):
-        if rc==0:
+    if res_ratio == 0.5:
+        res_com_loc = input[13]
+        com_floor = input[11]
+    else:
+        res_com_loc = input[14]
+        com_floor = input[16]
+
+    sum_res = []
+    sum_com = []
+
+    for rc in res_com_loc:
+        if rc == 0:
             sum_res.append(1)
         else:
             sum_com.append(1)
+
+    if 180 <= Densityeachbldg <= 240:
+        stories = input[4]
+
+    elif 240 < Densityeachbldg <= 300:
+        if Bldg_Footprint == 0.45:
+            stories = input[5]
+        else:
+            stories = input[4]
+
+    elif 300 < Densityeachbldg <= 360:
+        if Bldg_Footprint == 0.45:
+            stories = input[7]
+        else:
+            stories = input[5]
+
+    elif 360 < Densityeachbldg <= 420:
+        if Bldg_Footprint == 0.45:
+            stories = input[8]
+        else:
+            stories = input[6]
+
+    elif 420 < Densityeachbldg <= 480:
+        if Bldg_Footprint == 0.45:
+            stories = input[9]
+        else:
+            stories = input[7]
+
+    elif 480 < Densityeachbldg <= 540:
+        stories = input[8]
+
+    elif 540 < Densityeachbldg <= 700:
+        stories = input[9]
+
+    return Rotation, Sub_street, Bldg_Footprint, WWR, stories, building_loc, park_loc, res_com_loc, com_floor, sum_res, sum_com
     
-    
-    print(res_com_loc,com_floor)
-    
-    if 180<=Densityeachbldg<=240:
-        if Bldg_Footprint==0.45:
-            stories=input[4]
-        else:
-            stories=input[4]
-
-    elif 240<Densityeachbldg<=300:
-        if Bldg_Footprint==0.45:
-            stories=input[5]
-        else:
-            stories=input[4]           
-    elif 300<Densityeachbldg<=360:
-        if Bldg_Footprint==0.45:
-            stories=input[7]
-        else:
-            stories=input[5]
-
-    elif 360<Densityeachbldg<=420:
-        if Bldg_Footprint==0.45:
-            stories=input[8]
-        else:
-            stories=input[6]
-    elif 420<Densityeachbldg<=480:
-        if Bldg_Footprint==0.45:
-            stories=input[9]
-        else:
-            stories=input[7]
-
-    elif 480<Densityeachbldg<=540:
-        stories=input[8]
-
-    elif 540<Densityeachbldg<=700:
-        stories=input[9]
-
     pairs = [(stories[i], stories[i + 1]) for i in range(0, len(stories), 2)]
     unpacked_list = [element for pair in pairs for element in pair[::-1]]
 
