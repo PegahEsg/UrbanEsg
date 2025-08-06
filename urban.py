@@ -315,12 +315,12 @@ def calculate_weighted_score(solution, selected_metrics, weights, my_list1, true
 
     # تعریف حدود نرمالایز برای هر شاخص
     min_max = {
-        "EUI": (120, 350),
-        "Cooling": (70, 160),
-        "Heating": (40, 100),
+        "EUI": (190, 350),
+        "Cooling": (70, 150),
+        "Heating": (30, 100),
         "Lighting": (10, 40),
         "Radiation-Hottest week": (50, 1000),
-        "Solar Hours": (1, 6),
+        "Solar Hours": (1, 5),
         "Radiation-Coldest week": (50, 1000),
         "SVF": (30, 100),
         "Visibility": (30, 100),
