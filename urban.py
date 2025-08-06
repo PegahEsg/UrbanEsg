@@ -1140,7 +1140,7 @@ if on:
     scored_solutions.sort(key=lambda x: x[0])  # lower score is better
     top_solutions = scored_solutions[:options]
 
-for score, solution in top_solutions:
+    for score, solution in top_solutions:
         st.write(f"Weighted Score: {round(score, 3)}")
         st.header(f"Alternative {int(opt)}")
         opt+=1
