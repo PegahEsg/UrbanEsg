@@ -284,7 +284,7 @@ for i in range(len(my_list)):
     if my_list[i] == True:
         true_indexes.append(i)
 
-my_list1 = ["EUI", "Cooling", "Heating", "Lighting", "Roof Hot", "Hours", "Roof Cold", "SVF", "Visibility", "PV", "Co2"]
+my_list1 = ["EUI","Cooling","Heating","Lighting","Radiation-Hottest week","Solar Hours","Radiation-Coldest week","SVF","Visibility","PV Power","CO2 Emission"]
 
 objective_directions = {
     "EUI": "min",
@@ -302,7 +302,7 @@ objective_directions = {
 
 selected_metrics = [my_list1[i] for i in true_indexes]
 
-st.sidebar.markdown("### Weight assignment to selected metrics")
+st.sidebar.markdown("###Weight assignment to selected metrics")
 weights = {}
 for metric in selected_metrics:
     weights[metric] = st.sidebar.slider(f"Weight for {metric}", 0.0, 10.0, 1.0, 1.0)
@@ -1181,7 +1181,7 @@ if on:
 
         data4=pd.DataFrame([res_com_loc],columns=['com or res?'+str(i) for i in range(0,len(res_com_loc))])
         data5=pd.DataFrame([com_floor],columns=['com floor'+str(i) for i in range(0,len(com_floor))])
-        my_list1=["Cooling","Heating","Lighting","Roof Hot","Hours","Roof Cold","SVF","Visibility","PV","Co2"]
+        my_list1=["Cooling","Heating","Lighting","Radiation-Hottest week","Solar Hours","Radiation-Coldest week","SVF","Visibility","PV Power","CO2 Emission"]
         
         tr=0
         for i in true_indexes:
