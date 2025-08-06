@@ -310,27 +310,46 @@ for metric in selected_metrics:
 
 
 def calculate_weighted_score(solution, selected_metrics, weights, my_list1, true_indexes):
-    normalizers = {
-        "EUI": 400,
-        "Heating": 200,
-        "Cooling": 300,
-        "Lighting": 100,
-        "PV": 300,
-        "SVF": 1,
-        "Visibility": 100,
-        "Shading": 100,
-        "Sky View": 1
+    score = 0
+    normalized_values = []
+
+    # تعریف حدود نرمالایز برای هر شاخص
+    min_max = {
+        "EUI": (80, 400),
+        "Cooling": (70, 160),
+        "Heating": (40, 100),
+        "Lighting": (15, 40),
+        "Radiation-Hottest week": (50, 1000),
+        "Solar Hours": (1, 5),
+        "Radiation-Coldest week": (50, 1000),
+        "SVF": (30, 100),
+        "Visibility": (30, 100),
+        "PV Power": (0, 0.5),
+        "CO2 Emission": (0, 300)
     }
 
-    score = 0
-    for metric, weight in zip(selected_metrics, weights):
-        if metric in my_list1:
-            idx = my_list1.index(metric)
-            value = solution.objectives[idx]
-            normalized_value = value / normalizers.get(metric, 1)
-            score += normalized_value * weight
+    for i in range(len(true_indexes)):
+        metric_name = my_list1[true_indexes[i]]
+        value = solution.objectives[i]
+        weight = weights.get(metric_name, 1)
 
-    return score
+        # گرفتن بازه نرمالایز
+        min_val, max_val = min_max[metric_name]
+
+        # نرمالایز بر اساس جهت بهینه‌سازی
+        if objective_directions[metric_name] == "min":
+            norm = (max_val - value) / (max_val - min_val)
+        else:  # if "max"
+            norm = (value - min_val) / (max_val - min_val)
+
+        # محدود کردن به بازه ۰ تا ۱
+        norm = max(0, min(norm, 1))
+
+        normalized_values.append(norm * weight)
+
+    # میانگین وزنی و نرمال‌سازی نهایی بین ۰ تا ۱۰
+    weighted_score = sum(normalized_values) / sum(weights.values()) * 10
+    return weighted_score
 
 options=int(st.sidebar.number_input("How many Alternative do you want?",min_value=1,max_value=5,value=1,step=1))
 on = st.sidebar.button('Optimize')  
