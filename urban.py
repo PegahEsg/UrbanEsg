@@ -324,8 +324,8 @@ def calculate_weighted_score(solution, selected_metrics, weights, my_list1, true
         "Radiation-Coldest week": (50, 1000),
         "SVF": (30, 100),
         "Visibility": (30, 100),
-        "PV Power": (0, 200),
-        "CO2 Emission": (0, 300000)
+        "PV Power": (0, 170),
+        "CO2 Emission": (0, 50000)
     }
 
     for i in range(len(true_indexes)):
