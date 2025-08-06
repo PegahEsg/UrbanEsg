@@ -291,13 +291,13 @@ objective_directions = {
     "Cooling": "min",
     "Heating": "min",
     "Lighting": "min",
-    "Roof Hot": "max",
-    "Hours": "max",
-    "Roof Cold": "max",
+    "Radiation-Hottest week": "max",
+    "Solar Hours": "max",
+    "Radiation-Coldest week": "max",
     "SVF": "max",
     "Visibility": "max",
-    "PV": "max",
-    "Co2": "min"
+    "PV Power": "max",
+    "CO2 Emission": "min"
 }
 
 selected_metrics = [my_list1[i] for i in true_indexes]
