@@ -1568,7 +1568,7 @@ with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
     st.download_button(label="Download optimization results ",data=buffer,file_name="pandas_multiple.xlsx",mime="application/vnd.ms-excel")
 
 else:
-st.write("Tap Toggle to Optimize")
+    st.write("Tap Toggle to Optimize")
     
     
     
