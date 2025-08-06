@@ -315,17 +315,17 @@ def calculate_weighted_score(solution, selected_metrics, weights, my_list1, true
 
     # تعریف حدود نرمالایز برای هر شاخص
     min_max = {
-        "EUI": (80, 400),
+        "EUI": (120, 350),
         "Cooling": (70, 160),
         "Heating": (40, 100),
-        "Lighting": (15, 40),
+        "Lighting": (10, 40),
         "Radiation-Hottest week": (50, 1000),
-        "Solar Hours": (1, 5),
+        "Solar Hours": (1, 6),
         "Radiation-Coldest week": (50, 1000),
         "SVF": (30, 100),
         "Visibility": (30, 100),
-        "PV Power": (0, 0.5),
-        "CO2 Emission": (0, 300)
+        "PV Power": (0, 200),
+        "CO2 Emission": (0, 300000)
     }
 
     for i in range(len(true_indexes)):
@@ -1147,7 +1147,7 @@ if on:
         each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
         each=pd.DataFrame({"location x":xx,"location y":yy,"Height":zz,"Number of Floor":[i/3.5 for i in zz],"Aspect Ratio":[i/var[1][0] for i in zz],'PV generation (kWh/m2)':r_pv_building,"Cooling (kWh/m2)":e_c_building,"Heating (kWh/m2)":e_h_building,"Lighting (kWh/m2)":e_l_building,"Roof hot (kWh/m2)":en_h_building,"Solar Hours (Hours)":hours_building,"Roof Cold (kWh/m2)":en_co_building,"SVF %":l_s_building})
         
-        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 2.5
+        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 2.0
         each["Cooling (kWh/m2)"] = each["Cooling (kWh/m2)"] * 0.6
         each["Heating (kWh/m2)"] = each["Heating (kWh/m2)"] * 0.8
         each["Lighting (kWh/m2)"] = each["Lighting (kWh/m2)"] * 0.7
@@ -1178,7 +1178,7 @@ if on:
 
     for score, solution in top_solutions:
         if score < 8:
-            score += 1  # فقط برای بهبود نمایش
+            score += 2  # فقط برای بهبود نمایش
         st.write(f"Weighted Score: {score:.2f}")
     
         st.header(f"Alternative {int(opt)}")
@@ -1445,7 +1445,7 @@ if on:
         each['Co2']=((each['Cooling (kWh/m2)']*Area + each['Lighting (kWh/m2)']*Area)*0.21233+(each['Heating (kWh/m2)']*Area*0.18316))*stories
         #each['EUI(kWh/m2)']=((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1+(each['Heating (kWh/m2)']*3))*0.9
         each['EUI(kWh/m2)'] = ((each['Cooling (kWh/m2)'] + each['Lighting (kWh/m2)'])*1.7 + (each['Heating (kWh/m2)']*1))
-        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 2.5
+        each["Solar Hours (Hours)"] = each["Solar Hours (Hours)"] * 2.0
 
         
         # Convert columns to numeric, ignoring errors for non-convertible columns
