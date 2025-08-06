@@ -309,7 +309,7 @@ for metric in selected_metrics:
 
 
 
-def calculate_weighted_score(solution, weights):
+def calculate_weighted_score(solution, selected_metrics, weights, my_list1, true_indexes):
     normalizers = {
         "EUI": 400,
         "Heating": 200,
@@ -323,7 +323,7 @@ def calculate_weighted_score(solution, weights):
     }
 
     score = 0
-    for metric, weight in weights.items():
+    for metric, weight in zip(selected_metrics, weights):
         if metric in solution:
             value = solution[metric]
             normalized_value = value / normalizers.get(metric, 1)
