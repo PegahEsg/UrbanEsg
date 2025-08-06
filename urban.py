@@ -947,10 +947,10 @@ scored_solutions.sort(key=lambda x: x[1], reverse=True)
 top_solutions = scored_solutions[:options]
 
 
-    data=pd.DataFrame()
-    col=st.columns(options)
-    opt=1
-    download=pd.DataFrame()
+data=pd.DataFrame()
+col=st.columns(options)
+opt=1
+download=pd.DataFrame()
     for solution in algorithm.result:
         var=solution.variables
         OB=[]
